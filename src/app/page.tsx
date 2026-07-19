@@ -1,65 +1,106 @@
-import Image from "next/image";
+import AutoRefresh from "@/components/AutoRefresh";
+import PremiumTable from "@/components/PremiumTable";
+import { getPremiums } from "@/lib/premium";
+import { getMarketStatus } from "@/lib/market";
+import { formatPct } from "@/lib/format";
 
-export default function Home() {
+export const revalidate = 30;
+
+export default async function Home() {
+  const [rows, market] = [await getPremiums(), getMarketStatus()];
+  const liquid = rows.filter((r) => r.liquid);
+  const illiquid = rows.filter((r) => !r.liquid);
+
+  const avg =
+    liquid.length > 0
+      ? liquid.reduce((s, r) => s + r.premiumPct, 0) / liquid.length
+      : 0;
+  const top = liquid[0];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex flex-col gap-6">
+      <AutoRefresh seconds={45} />
+
+      <section className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold tracking-tight">
+          Where does the market think stocks open next?
+        </h1>
+        <p className="max-w-3xl text-sm text-text-secondary">
+          Robinhood stock tokens keep trading on Robinhood Chain while the real
+          market is closed. The gap between a token&apos;s live onchain price
+          and its official Chainlink close is the market&apos;s bet on the next
+          open.
+        </p>
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border border-border bg-bg-secondary p-4">
+          <p className="text-xs uppercase tracking-wide text-text-muted">
+            US market
+          </p>
+          <p className="mt-1 flex items-center gap-2 text-lg font-semibold">
+            <span
+              className={`inline-block h-2.5 w-2.5 rounded-full ${
+                market.open ? "bg-accent" : "bg-warning"
+              }`}
+            />
+            {market.open ? "Open" : `Closed · ${market.label}`}
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="rounded-xl border border-border bg-bg-secondary p-4">
+          <p className="text-xs uppercase tracking-wide text-text-muted">
+            Average premium ({liquid.length} stocks)
+          </p>
+          <p
+            className={`mono mt-1 text-lg font-semibold ${
+              avg >= 0 ? "text-accent" : "text-danger"
+            }`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {formatPct(avg)}
+          </p>
         </div>
-      </main>
+        <div className="rounded-xl border border-border bg-bg-secondary p-4">
+          <p className="text-xs uppercase tracking-wide text-text-muted">
+            Biggest gap
+          </p>
+          <p className="mono mt-1 text-lg font-semibold">
+            {top ? (
+              <>
+                {top.stock.ticker}{" "}
+                <span className={top.premiumPct >= 0 ? "text-accent" : "text-danger"}>
+                  {formatPct(top.premiumPct)}
+                </span>
+              </>
+            ) : (
+              "–"
+            )}
+          </p>
+        </div>
+      </section>
+
+      <PremiumTable rows={liquid} />
+
+      {illiquid.length > 0 && (
+        <details className="rounded-xl border border-border bg-bg-secondary/50 px-4 py-3">
+          <summary className="cursor-pointer text-sm text-text-secondary">
+            Low-liquidity tokens ({illiquid.length}) — DEX prices unreliable
+          </summary>
+          <p className="mt-2 text-xs text-text-muted">
+            Under ${"1,000"} of 24h onchain volume: a single stale pool print
+            can show an absurd &quot;premium&quot;, so these are excluded from
+            the stats above.
+          </p>
+          <div className="mt-3">
+            <PremiumTable rows={illiquid} />
+          </div>
+        </details>
+      )}
+
+      <p className="text-xs text-text-muted">
+        &quot;Official close&quot; is the Chainlink feed on Robinhood Chain —
+        it follows market hours, so outside the session it holds the last
+        close. Token prices update 24/7. Auto-refreshes every 45s.
+      </p>
     </div>
   );
 }
