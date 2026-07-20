@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { STOCKS, type StockEntry } from "./registry";
 import { readFeeds } from "./chain";
 import { getTokenQuotes } from "./prices";
@@ -30,7 +31,9 @@ export const LIQUIDITY_FLOOR_USD = 1000;
  * and a Chainlink feed reading. Stocks where either side is missing are
  * dropped rather than shown with fake numbers.
  */
-export async function getPremiums(): Promise<StockPremium[]> {
+export const getPremiums = cache(async function getPremiums(): Promise<
+  StockPremium[]
+> {
   const [feeds, quotes] = await Promise.all([
     readFeeds(STOCKS.map((s) => s.feed)),
     getTokenQuotes(),
@@ -53,4 +56,4 @@ export async function getPremiums(): Promise<StockPremium[]> {
   }
   rows.sort((a, b) => Math.abs(b.premiumPct) - Math.abs(a.premiumPct));
   return rows;
-}
+});

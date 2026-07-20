@@ -90,5 +90,20 @@ ${rows
 export const STOCK_BY_TICKER = new Map(STOCKS.map((s) => [s.ticker, s]));
 `;
 
-writeFileSync(process.argv[2] ?? "registry.ts", out);
-console.log("written", process.argv[2] ?? "registry.ts");
+const tsPath = process.argv[2] ?? "registry.ts";
+writeFileSync(tsPath, out);
+console.log("written", tsPath);
+
+// Plain-data mirror of STOCKS for scripts that can't import a .ts file
+// (e.g. scripts/snapshot-premiums.mjs, run standalone in CI). Keep this next
+// to registry.ts so both are always regenerated together — do not hand-edit.
+const jsonPath = tsPath.replace(/\.ts$/, ".json");
+writeFileSync(
+  jsonPath,
+  JSON.stringify(
+    rows.map((r) => ({ ticker: r.ticker, name: r.name, token: r.token, feed: r.feed })),
+    null,
+    2,
+  ) + "\n",
+);
+console.log("written", jsonPath);

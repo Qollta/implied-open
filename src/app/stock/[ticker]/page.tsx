@@ -1,16 +1,42 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import AutoRefresh from "@/components/AutoRefresh";
 import PremiumBadge from "@/components/PremiumBadge";
+import PremiumHistoryChart from "@/components/PremiumHistoryChart";
+import ShareButton from "@/components/ShareButton";
 import TickerIcon from "@/components/TickerIcon";
 import { STOCK_BY_TICKER } from "@/lib/registry";
 import { getPremiums } from "@/lib/premium";
+import { getPremiumHistory } from "@/lib/history";
 import { getMarketStatus } from "@/lib/market";
-import { formatCompactUsd, formatUsd, timeAgo } from "@/lib/format";
+import { formatCompactUsd, formatPct, formatUsd, timeAgo } from "@/lib/format";
 
 export const revalidate = 30;
 
 const BLOCKSCOUT = "https://robinhoodchain.blockscout.com";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ ticker: string }>;
+}): Promise<Metadata> {
+  const { ticker } = await params;
+  const stock = STOCK_BY_TICKER.get(ticker.toUpperCase());
+  if (!stock) return {};
+
+  const rows = await getPremiums().catch(() => []);
+  const row = rows.find((r) => r.stock.ticker === stock.ticker);
+  const description = row
+    ? `${stock.name} (${stock.ticker}) is trading at ${formatPct(row.premiumPct)} vs its official close on Robinhood Chain — 24/7 tokenized stock prices.`
+    : `${stock.name} (${stock.ticker}) tokenized stock price on Robinhood Chain.`;
+
+  return {
+    title: `${stock.ticker}${row ? ` ${formatPct(row.premiumPct)}` : ""} — Implied Open`,
+    description,
+    twitter: { card: "summary_large_image" },
+  };
+}
 
 export default async function StockPage({
   params,
@@ -21,7 +47,10 @@ export default async function StockPage({
   const stock = STOCK_BY_TICKER.get(ticker.toUpperCase());
   if (!stock) notFound();
 
-  const rows = await getPremiums();
+  const [rows, history] = await Promise.all([
+    getPremiums().catch(() => []),
+    getPremiumHistory(stock.ticker),
+  ]);
   const row = rows.find((r) => r.stock.ticker === stock.ticker);
   const market = getMarketStatus();
 
@@ -33,21 +62,31 @@ export default async function StockPage({
         ← All stocks
       </Link>
 
-      <div className="flex items-center gap-4">
-        <TickerIcon ticker={stock.ticker} icon={stock.icon} size={48} />
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {stock.ticker}
-            <span className="ml-3 text-base font-normal text-text-secondary">
-              {stock.name}
-            </span>
-          </h1>
-          <p className="text-xs text-text-muted">
-            {market.open
-              ? "US market is open — premium should stay near zero"
-              : `US market closed (${market.label.toLowerCase()}) — the token is trading ahead of the next open`}
-          </p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <TickerIcon ticker={stock.ticker} icon={stock.icon} size={48} />
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {stock.ticker}
+              <span className="ml-3 text-base font-normal text-text-secondary">
+                {stock.name}
+              </span>
+            </h1>
+            <p className="text-xs text-text-muted">
+              {market.open
+                ? "US market is open — premium should stay near zero"
+                : `US market closed (${market.label.toLowerCase()}) — the token is trading ahead of the next open`}
+            </p>
+          </div>
         </div>
+        {row && (
+          <ShareButton
+            ticker={stock.ticker}
+            name={stock.name}
+            premiumPct={row.premiumPct}
+            marketOpen={market.open}
+          />
+        )}
       </div>
 
       {row ? (
@@ -96,6 +135,8 @@ export default async function StockPage({
               }
             />
           </div>
+
+          <PremiumHistoryChart points={history} />
         </>
       ) : (
         <div className="rounded-xl border border-border bg-bg-secondary p-6 text-sm text-text-secondary">

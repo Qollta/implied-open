@@ -14,9 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3100"),
   title: "Implied Open — 24/7 stock prices on Robinhood Chain",
   description:
     "Robinhood Chain stock tokens trade around the clock. Implied Open tracks the live premium or discount of every token against its official closing price — the market's prediction of where each stock opens next.",
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({
