@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #0b0e11;
-  --bg-secondary: #12161c;
-  --bg-hover: #1a2028;
-  --border: #232b35;
+  --bg-primary: #060a07;
+  --bg-secondary: #0d150f;
+  --bg-hover: #17241a;
+  --border: #1e3022;
   --text-primary: #eef2f6;
   --text-secondary: #9aa7b4;
   --text-muted: #64707d;
@@ -31,7 +31,11 @@
 }
 
 body {
-  background: var(--bg-primary);
+  background:
+    radial-gradient(ellipse 90% 40% at 50% -10%, rgba(0, 200, 5, 0.10), transparent),
+    radial-gradient(ellipse 60% 30% at 100% 0%, rgba(0, 200, 5, 0.05), transparent),
+    var(--bg-primary);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }

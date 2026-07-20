@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3100"),
-  title: "Implied Open — 24/7 stock prices on Robinhood Chain",
+  title: "RHAM — RobinHood Assets Market",
   description:
-    "Robinhood Chain stock tokens trade around the clock. Implied Open tracks the live premium or discount of every token against its official closing price — the market's prediction of where each stock opens next.",
+    "RHAM tracks and lets you bet on real-world stocks tokenized on Robinhood Chain — the live premium while markets are closed, and non-custodial prediction markets on whether a stock opens higher or lower, both across the weekend and during the trading session.",
   twitter: { card: "summary_large_image" },
 };
 
@@ -33,15 +33,16 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <header className="border-b border-border bg-bg-secondary/60 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 lg:px-6">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-6">
             <Link href="/" className="flex items-baseline gap-2">
               <span className="text-lg font-bold tracking-tight text-accent">
-                Implied Open
+                RHAM
               </span>
               <span className="hidden text-xs text-text-muted sm:inline">
-                stocks never sleep on Robinhood Chain
+                RobinHood Assets Market
               </span>
             </Link>
+            {/* Twitter/X and $RHAM links go here once they exist. */}
           </div>
         </header>
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 lg:px-6">
@@ -50,7 +51,8 @@ export default function RootLayout({
         <footer className="mx-auto w-full max-w-6xl px-4 py-8 text-xs text-text-muted lg:px-6">
           <p>
             Token prices from Robinhood Chain DEXes (via Blockscout) · official
-            prices from Chainlink feeds on Robinhood Chain · not investment
+            prices from Chainlink feeds on Robinhood Chain · Predict markets
+            are Robinhood Chain testnet only, play money · not investment
             advice.
           </p>
         </footer>

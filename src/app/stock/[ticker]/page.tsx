@@ -10,6 +10,7 @@ import { STOCK_BY_TICKER } from "@/lib/registry";
 import { getPremiums } from "@/lib/premium";
 import { getPremiumHistory } from "@/lib/history";
 import { getMarketStatus } from "@/lib/market";
+import { PREDICTABLE_TICKERS } from "@/lib/predictContracts";
 import { formatCompactUsd, formatPct, formatUsd, timeAgo } from "@/lib/format";
 
 export const revalidate = 30;
@@ -79,14 +80,24 @@ export default async function StockPage({
             </p>
           </div>
         </div>
-        {row && (
-          <ShareButton
-            ticker={stock.ticker}
-            name={stock.name}
-            premiumPct={row.premiumPct}
-            marketOpen={market.open}
-          />
-        )}
+        <div className="flex shrink-0 items-center gap-2">
+          {(PREDICTABLE_TICKERS as readonly string[]).includes(stock.ticker) && (
+            <Link
+              href={`/predict/${stock.ticker}`}
+              className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-colors hover:bg-accent-hover"
+            >
+              Predict →
+            </Link>
+          )}
+          {row && (
+            <ShareButton
+              ticker={stock.ticker}
+              name={stock.name}
+              premiumPct={row.premiumPct}
+              marketOpen={market.open}
+            />
+          )}
+        </div>
       </div>
 
       {row ? (

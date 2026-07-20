@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // contracts/ is a separate npm package (Hardhat) with its own tooling.
+    "contracts/**",
   ]),
 ]);
 

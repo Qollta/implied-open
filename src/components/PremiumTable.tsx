@@ -4,8 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import TickerIcon from "./TickerIcon";
 import PremiumBadge from "./PremiumBadge";
+import TimeAgo from "./TimeAgo";
 import type { StockPremium } from "@/lib/premium";
-import { formatCompactUsd, formatUsd, timeAgo } from "@/lib/format";
+import { formatCompactUsd, formatUsd } from "@/lib/format";
 
 type SortKey = "premium" | "volume" | "price";
 
@@ -82,7 +83,7 @@ export default function PremiumTable({ rows }: { rows: StockPremium[] }) {
                 {r.volume24h != null ? formatCompactUsd(r.volume24h) : "–"}
               </td>
               <td className="mono px-4 py-3 text-right text-xs text-text-muted">
-                {timeAgo(r.officialUpdatedAt)}
+                <TimeAgo unixSeconds={r.officialUpdatedAt} />
               </td>
             </tr>
           ))}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AutoRefresh from "@/components/AutoRefresh";
 import PremiumTable from "@/components/PremiumTable";
 import { getPremiums } from "@/lib/premium";
@@ -21,16 +22,59 @@ export default async function Home() {
     <div className="flex flex-col gap-6">
       <AutoRefresh seconds={45} />
 
-      <section className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold tracking-tight">
+      <section className="flex flex-col gap-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent">
+          RHAM — RobinHood Assets Market
+        </p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Where does the market think stocks open next?
         </h1>
         <p className="max-w-3xl text-sm text-text-secondary">
-          Robinhood stock tokens keep trading on Robinhood Chain while the real
-          market is closed. The gap between a token&apos;s live onchain price
-          and its official Chainlink close is the market&apos;s bet on the next
-          open.
+          Robinhood Chain lets real-world stocks (RWA) trade on-chain 24/7,
+          but their &quot;official&quot; price only updates while NYSE is
+          open. That leaves a live, constantly-moving gap between what a
+          token trades at right now and its last official close — a signal
+          that simply didn&apos;t exist before tokenized equities. RHAM is
+          built entirely around that gap, in two ways.
         </p>
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded-xl border border-border bg-bg-secondary p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent">
+            01 · Watch it
+          </p>
+          <h2 className="mt-1 text-lg font-semibold text-text-primary">
+            Implied Open
+          </h2>
+          <p className="mt-2 text-sm text-text-secondary">
+            The dashboard below — free, no wallet needed. Every tokenized
+            stock&apos;s live premium or discount vs. its official close,
+            updated continuously. While the market&apos;s shut, it&apos;s the
+            on-chain crowd&apos;s running bet on where the stock reopens.
+          </p>
+        </div>
+        <Link
+          href="/predict"
+          className="group rounded-xl border border-border bg-bg-secondary p-5 transition-colors hover:border-accent"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent">
+            02 · Bet on it
+          </p>
+          <h2 className="mt-1 flex items-center gap-1 text-lg font-semibold text-text-primary">
+            Predict
+            <span className="transition-transform group-hover:translate-x-0.5">→</span>
+          </h2>
+          <p className="mt-2 text-sm text-text-secondary">
+            Non-custodial markets, resolved entirely on-chain, no admin
+            deciding the outcome. Two kinds:{" "}
+            <strong className="text-text-primary">weekend gap</strong> — will
+            Friday&apos;s close open higher or lower on Monday — and{" "}
+            <strong className="text-text-primary">trading session</strong> —
+            up or down between the open and close of a single session. Same
+            contract, same mechanic, just a different pair of timestamps.
+          </p>
+        </Link>
       </section>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
