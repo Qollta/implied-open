@@ -150,27 +150,114 @@ src/
                                 iff the ticker is in PREDICTABLE_TICKERS — see §9
     stock/[ticker]/opengraph-image.tsx   Per-stock share card
     stock/[ticker]/loading.tsx
-    predict/page.tsx            Ticker index (server-rendered, no wallet) — §9
-    predict/[ticker]/page.tsx    One ticker's markets + bet UI + ConnectWallet — §9
+    heatmap/page.tsx             Ticker × day premium heatmap — §5 "Heatmap"
+    api/premium/route.ts          Public JSON, all tickers, open CORS — §3
+    api/premium/[ticker]/route.ts  Public JSON, one ticker, open CORS — §3
+    embed/[ticker]/route.ts        Bare iframe-able HTML card, Route Handler
+                                (no root layout) — §3 "Embeddable widget"
+    predict/page.tsx            Ticker index (server-rendered, no wallet):
+                                site-wide stat tiles, one rich card per
+                                ticker (premium badge + sparkline + pool bar,
+                                not just a bare link), PoolDominanceBars — §9
+    predict/[ticker]/page.tsx    One ticker's markets + bet UI + ConnectWallet
+                                + RecentBets for the latest market, plus a
+                                stat row and PremiumHistoryChart /
+                                ImpliedProbabilityChart side by side — §9
     predict/[ticker]/layout.tsx   Wraps children in PredictProviders (scoped wagmi)
     predict/[ticker]/providers.tsx WagmiProvider + QueryClientProvider, client-only
+    predict/leaderboard/page.tsx    RealPlayTabs of two LeaderboardTables —
+                                all-time real-ETH and this-week-only chips —
+                                plus a WalletSearch box — §9
+    predict/wallet/[address]/page.tsx  One wallet's full bet history +
+                                staked/claimed/net, joined against live
+                                market state — §9
+    watchlist/page.tsx           Server-fetches the same data as the
+                                dashboard, hands it to `WatchlistTable` to
+                                filter client-side by localStorage — §5
+                                "Watchlist"
     layout.tsx, globals.css    Dark theme, header/footer. Header has **no**
                                 "Predict" link (removed deliberately, see §9
-                                "Nav flow") and no Twitter/$RHAM links yet
-                                (real URLs not decided — don't add placeholders)
+                                "Nav flow") but does have "Heatmap"/"Watchlist"
+                                links and the global `WalletTrackerDrawer`
+                                trigger; no Twitter/$RHAM links yet (real URLs
+                                not decided — don't add placeholders)
   components/
-    PremiumTable.tsx           Client component, sortable (premium/volume/price)
+    PremiumTable.tsx           Client component, sortable (premium/volume/price).
+                                Takes an optional `sparklines` prop (adds a
+                                "Trend" column) — pass it from pages that
+                                fetched `getSparklines()`, omit it elsewhere
+                                (e.g. the low-liquidity `<details>` table) — §5
+    WatchButton.tsx              Star toggle (localStorage), same SVG glyph as
+                                RH Explorer's — homepage/watchlist table rows
+                                and the stock detail page header — §5
+    WatchlistTable.tsx            Client, filters server-fetched rows by
+                                `useWatchlist()` — §5
+    HighlightCard.tsx             Server component, one ranked mini-list
+                                (Top Gainers / Top Losers / Most Liquid) — §5
+    MiniSparkline.tsx              Tiny non-interactive SVG trend line for a
+                                table cell — §5
     PremiumBadge.tsx           Colored +/-% pill, `size="sm"|"lg"`
     PremiumHistoryChart.tsx    Hand-built SVG line chart w/ hover, client component
+    PremiumHeatmap.tsx          Client component, ticker×day grid: gradient
+                                legend, biggest-gap/A-Z sort toggle, floating
+                                cursor tooltip, bullish/bearish summary — §5
+    SessionBreakdown.tsx        Server component, avg premium per NYSE session — §5
     ShareButton.tsx            Opens a prefilled X/Twitter intent window
+    EmbedSnippet.tsx             Copyable <iframe> snippet for /embed/[ticker] — §3
     TickerIcon.tsx             Robinhood CDN logo w/ fallback badge on error
     TimeAgo.tsx                 Corrects a server-rendered relative time on
                                 mount — see §7 "hydration mismatch" gotcha
     AutoRefresh.tsx            router.refresh() every N seconds (client)
     ConnectWallet.tsx           Wallet **picker** (not a single connect button)
                                 — see §9 "Wallet & UI"
-    PredictMarketCard.tsx        One prediction market: pools, countdown, bet/lock/
-                                resolve/claim, weekend-vs-session badge — §9
+    PredictMarketCard.tsx        One real-money (GapMarket) prediction market:
+                                pools, countdown, bet/lock/resolve/claim,
+                                weekend-vs-session badge — §9
+    PlayMarketCard.tsx             Chips-only sibling of PredictMarketCard —
+                                same UI, `placeBet` takes an explicit `amount`
+                                arg instead of `msg.value`, amounts formatted
+                                with `formatChips` not `formatEth` — §9
+    ClaimChipsButton.tsx           Shows chip balance + "claim this week's
+                                chips" button/countdown — §9
+    RealPlayTabs.tsx                Client, switches between pre-rendered
+                                real/play sections — **unmounts** the
+                                inactive one (not just CSS-hidden) so its
+                                wagmi polling hooks stop running — §9
+    LeaderboardTable.tsx            Shared table for both leaderboards, takes
+                                an optional `formatAmount` (defaults
+                                `formatEth`; leaderboard page passes
+                                `formatChips` for the play tab) — §9
+    ImpliedProbabilityChart.tsx   Filled-area SVG: share of the pool on UP
+                                over time, from `getPoolHistory()`/
+                                `getPlayPoolHistory()` — the pari-mutuel
+                                analog of a Polymarket/Kalshi probability
+                                line. Same hover/empty-state conventions as
+                                `PremiumHistoryChart` — §9
+    PoolDominanceBars.tsx          Ranked bar list, % of all-time ETH staked
+                                per ticker — CoinGecko-dominance-chart shape,
+                                on `/predict` — §9
+    RecentBets.tsx                Live BetPlaced feed for one market (wallet,
+                                amount, UP/DOWN) — server initial + client
+                                poll every 15s, no subgraph. Takes `mode:
+                                "real"|"play"` (a plain string, **not** a
+                                function prop — see §9 "PlayMarket" for why
+                                that specific mistake breaks outright) to
+                                pick GapMarket vs PlayMarket's reader/
+                                formatter — §9
+    WalletSearch.tsx               Client, address input → /predict/wallet/[address]
+                                (viem `isAddress` validation) — §9
+    MyActivityLink.tsx              Client, `useAccount()`-based "My bets →"
+                                link — **only usable under `/predict/[ticker]`**,
+                                the one route tree with `PredictProviders`
+                                (wagmi) in scope; would throw outside it — §9
+    WalletTrackerDrawer.tsx          Client, mounted once in root `layout.tsx`
+                                — trigger button + slide-in side panel, usable
+                                from every page. Pure address lookup (no
+                                wallet connect needed, calls `getWalletActivity`
+                                directly), so it does **not** need wagmi —
+                                unlike `MyActivityLink` it works site-wide.
+                                Remembers up to 5 recent lookups in
+                                `localStorage` — §9
   lib/
     registry.ts                AUTO-GENERATED — see §3, don't hand-edit
     registry.json               AUTO-GENERATED plain-data mirror of registry.ts,
@@ -182,6 +269,16 @@ src/
                                 + liquidity filter (LIQUIDITY_FLOOR_USD);
                                 getPremiums() is wrapped in React `cache()`
     history.ts                 Reads data/premium-history/*.jsonl via node:fs
+    heatmap.ts                  Same *.jsonl files, grouped ticker×day instead
+                                of one ticker's timeline — §5
+    sessionBreakdown.ts          Buckets a ticker's history points by
+                                market.ts's session label, averages each — §5
+    sparkline.ts                  Same *.jsonl files again, grouped ticker →
+                                raw chronological timeline (not averaged like
+                                heatmap.ts) for the table's Trend column — §5
+    watchlist.ts                  "use client" localStorage store (toggleWatch/
+                                useWatchlist/useIsWatched) — ticker-only
+                                version of RH Explorer's lib/watchlist.ts — §5
     format.ts                  formatUsd, formatPct, formatCompactUsd, timeAgo
     chains.ts                   viem chain defs for /predict (testnet 46630,
                                 mainnet 4663 for later) — §9
@@ -191,26 +288,61 @@ src/
                                 showing a "Predict →" button) — §9
     predictAbi.ts                 AUTO-GENERATED by scripts/sync-predict-abi.mjs — §9
     predictFormat.ts              tickerFromBytes32, formatFeedPrice, formatEth,
-                                formatCountdown, formatSessionWindow — §9
-    predictMarkets.ts             Server-side (no wallet) GapMarket reads +
-                                toInitialMarket() serializer — §9
+                                formatChips (same math as formatEth, labeled
+                                "chips" — **never** use formatEth for a
+                                PlayMarket amount, see §9), formatCountdown,
+                                formatSessionWindow, truncateAddress — §9
+    predictMarkets.ts             Server-side (no wallet) reads for both
+                                contracts: getAllMarkets/
+                                getLatestMarketPerTicker (GapMarket) and
+                                getAllPlayMarkets/getLatestPlayMarketPerTicker
+                                (PlayMarket, duplicated not parametrized) +
+                                toInitialMarket() serializer (shared, same
+                                Market struct shape either contract) — §9
+    predictBets.ts                 Server- and client-safe GapMarket
+                                BetPlaced/Claimed event log reads
+                                (getBetsForMarket, getLeaderboard,
+                                getWalletActivity, getPredictOverview,
+                                getPoolHistory) — no subgraph, see §9
+    playBets.ts                    PlayMarket equivalent of predictBets.ts —
+                                getPlayBetsForMarket, getPlayWalletActivity,
+                                getPlayOverview, getPlayPoolHistory, and
+                                getPlayLeaderboard (this-week-only, unlike
+                                the all-time real leaderboard — see §9) —
+                                also exports currentWeekStart() — §9
 scripts/
   gen-registry.mjs             Regenerates src/lib/registry.{ts,json} from live APIs
   snapshot-premiums.mjs        Appends one premium snapshot line to
                                 data/premium-history/<date>.jsonl — run by CI
-  sync-predict-abi.mjs          Copies contracts/artifacts/**/*.json ABIs into
-                                src/lib/predictAbi.ts — §9
+  sync-predict-abi.mjs          Copies contracts/artifacts/**/*.json ABIs
+                                (GapMarket, PlayMarket, MockAggregator) into
+                                src/lib/predictAbi.ts — §9. Re-run after any
+                                Solidity change to either contract.
 .github/workflows/
   snapshot-premiums.yml        Cron (every 15 min): runs the script above, prunes
                                 snapshots >60 days old, commits + pushes
 data/premium-history/
   <YYYY-MM-DD>.jsonl           One JSON object per line per snapshot run
 contracts/                     Separate npm package (Hardhat 3) — GapMarket
+                                (real ETH) and PlayMarket (free weekly chips)
                                 prediction-market contracts. See §9.
+  contracts/PlayMarket.sol       Chips-only sibling of GapMarket.sol —
+                                claimWeeklyChips() + chip-balance bet/claim
+                                instead of msg.value/ETH transfer — §9
+  test/PlayMarket.ts              Mirrors test/GapMarket.ts's coverage plus
+                                weekly-reset-specific cases (claim resets not
+                                adds, can't claim twice same week, can't bet
+                                more chips than you hold)
   tickers.json                  Hand-maintained: ticker → mainnet feed / testnet
                                 mock / name, read by the scripts below — §9
+                                (shared by both GapMarket and PlayMarket
+                                scripts — one set of MockAggregators, two
+                                separate sets of markets)
   scripts/deploy-mock-feeds.ts   Deploys a MockAggregator per new ticker
-  scripts/create-markets.ts       Creates one market per ticker in tickers.json
+  scripts/create-markets.ts       Creates one GapMarket market per ticker
+  scripts/create-weekend-markets.ts   Creates one GapMarket weekend-gap market per ticker
+  scripts/create-play-markets.ts       PlayMarket equivalent of create-markets.ts
+  scripts/create-play-weekend-markets.ts  PlayMarket equivalent of create-weekend-markets.ts
   scripts/push-mock-prices.ts     Mirrors every ticker's real mainnet price
 ```
 
@@ -249,11 +381,120 @@ contracts/                     Separate npm package (Hardhat 3) — GapMarket
   and the page component call it for `stock/[ticker]/page.tsx`; without the
   wrapper each one independently re-hits the Chainlink RPC (which has no
   retry/backoff — see §7), doubling load per pageview.
-- **`next.config.ts` sets `outputFileTracingIncludes` for `/stock/*`.**
-  `history.ts` reads `data/premium-history/*.jsonl` with `node:fs` at
+- **`next.config.ts` sets `outputFileTracingIncludes` for `/`, `/stock/*`,
+  `/heatmap`, and `/watchlist`.** `history.ts`, `heatmap.ts`, and
+  `sparkline.ts` all read `data/premium-history/*.jsonl` with `node:fs` at
   request time; Next's build-time file tracing only follows static
   `import`/`require`, so without this the folder would silently be missing
-  from the Vercel serverless bundle (empty history, no error).
+  from the Vercel serverless bundle for whichever route reads it (empty
+  history/heatmap/sparklines, no error). **Any new route that reads that
+  folder needs its own entry added here** — the homepage needed one the
+  moment it started calling `getSparklines()`.
+- **`next.config.ts` also sets `devIndicators: false`** — Next 16's dev-only
+  on-screen route indicator (a small badge, bottom-left by default) has no
+  effect on production but is distracting during dev/screenshots; the error/
+  compile overlay itself still works with this off, per the Next docs.
+- **Heatmap** (`/heatmap`, `lib/heatmap.ts`): reuses the same committed
+  snapshot files as the per-stock history chart, just grouped ticker×day
+  instead of one ticker's timeline — average premium per ticker per UTC day,
+  rendered as a colored grid (green = premium, red = discount, opacity =
+  magnitude, capped at ±6%). Degrades the same way the history chart does:
+  with only a few days of committed snapshots it's a narrow grid, and fills
+  in as the cron keeps running. No new data source.
+- **Session breakdown** (`SessionBreakdown` on the stock page,
+  `lib/sessionBreakdown.ts`): buckets that ticker's history points by
+  `market.ts`'s existing session classifier (Weekend / After hours /
+  Pre-market / Regular session) and averages premium within each bucket.
+  Fetches a 14-day history window (vs. the chart's default 4d) so there's a
+  better chance of hitting a full weekend; renders nothing if fewer than 2
+  session types are present yet (not enough variety to be meaningful).
+- **CoinGecko-inspired dashboard pass**: `PremiumTable` gained a star column
+  (`WatchButton`, `lib/watchlist.ts`) and a "Trend" sparkline column
+  (`MiniSparkline`, `lib/sparkline.ts`) — same shape as a CoinGecko coin
+  table's watchlist star + 7d sparkline, adapted to our one metric (premium,
+  not price). The homepage also gained a `HighlightCard` trio (Top Gainers /
+  Top Losers / Most Liquid, top 5 each) above the main table, mirroring
+  CoinGecko's homepage "highlights" boxes — all computed from the same
+  `getPremiums()` call already on the page, no new fetch. `/watchlist`
+  (`WatchlistTable`) reuses `PremiumTable` unmodified, just pre-filtered to
+  `useWatchlist()`'s tickers client-side — the page itself still
+  server-fetches the full dataset (localStorage isn't readable server-side),
+  so there's no separate "watchlist-only" data path to keep in sync.
+  Deliberately did **not** chase CoinGecko's category tabs/global-currency
+  switcher/rank column — no sector taxonomy exists for these 34 tickers to
+  hang categories off, and everything here is already USD, so those specific
+  widgets wouldn't map to anything real; the parts that transplanted cleanly
+  were the ones keyed to a single per-row metric, which premium already is.
+- **Public API + embed widget** (`/api/premium`, `/api/premium/[ticker]`,
+  `/embed/[ticker]`): deliberately open CORS (`Access-Control-Allow-Origin:
+  *`) — this is the same `getPremiums()` data already shown on the dashboard,
+  just exposed for scripting/embedding by anyone, same spirit as
+  impliedopen.com's free embeddable widgets. `/embed/[ticker]` is a Route
+  Handler, not a page — Route Handlers skip the root layout entirely, which
+  is how it avoids inheriting the site header/footer/max-width wrapper
+  without needing a second route-group root layout. Styling is hand-inlined
+  (Tailwind's compiled CSS isn't available outside the page render pipeline).
+- **Leaderboard + recent bets** (`lib/predictBets.ts`): read `BetPlaced`/
+  `Claimed` logs straight off the RPC with `getContractEvents` — confirmed
+  live that a full `fromBlock: 0n` query against this contract works and is
+  cheap at current volume (a few dozen logs total). `getBetsForMarket` filters
+  server-side via the indexed `id` topic (`args: { id }`), not a client-side
+  scan, since `RecentBets` polls it client-side every 15s. `getLeaderboard`
+  genuinely needs the full unfiltered log set (aggregates across every
+  wallet/market) — fine today, but if bet volume ever grows enough for
+  `fromBlock: 0n` to get slow or hit an RPC range limit, both need a real
+  start block (e.g. the contract's deployment block) instead of `0n`. This is
+  still not the `useWatchContractEvent`/subgraph setup called out as missing
+  in §9 "Open items" — it's polling, not a push subscription — but it does
+  replace the "no visibility into other users' bets at all" gap that note
+  described.
+- **Wallet tracker** (`/predict/wallet/[address]`, `getWalletActivity()` in
+  `lib/predictBets.ts`): every bet + claim for one wallet, joined against
+  `getAllMarkets()` for ticker/state/outcome so each row can show "Unclaimed
+  win →" vs "Lost" vs still-open. Reachable three ways: `WalletSearch` (any
+  address, viem `isAddress` validated) on the leaderboard, each leaderboard
+  row's wallet link, and `MyActivityLink` ("My bets →") next to
+  `ConnectWallet` on `/predict/[ticker]` for the connected wallet. The page
+  itself is a plain server component (no wagmi) — `MyActivityLink` is the
+  only piece that needs a wallet connection, and it's client-only.
+- **Global wallet tracker drawer**: `WalletTrackerDrawer` lives in root
+  `layout.tsx`, so its trigger button and the slide-in panel it opens are on
+  every page, not just `/predict/*`. It's intentionally read-only and wallet-
+  connect-free — you paste any address, it calls the same
+  `getWalletActivity()` used by `/predict/wallet/[address]` directly from the
+  client (viem `createPublicClient`, no wagmi) — so it doesn't need to be
+  inside `PredictProviders` and doesn't expand the "wallet-connect only under
+  /predict" boundary from §5. `localStorage` recents are read in a
+  post-mount `useEffect` (guarded from SSR, `eslint-disable
+  react-hooks/set-state-in-effect` same as `TimeAgo`), not a lazy `useState`
+  initializer — the latter would read `localStorage` during the client's
+  first render and mismatch the server-rendered (empty) HTML.
+- **Predict cross-linking**: `PremiumTable` rows and `PremiumHeatmap` ticker
+  labels both show a small "Predict" pill linking to `/predict/[ticker]` when
+  the ticker is in `PREDICTABLE_TICKERS`; `/predict/[ticker]` links back to
+  `/stock/[ticker]` ("View premium →"). Still gated to the 8 tickers with a
+  deployed market — going further means running
+  `deploy-mock-feeds.ts`/`create-markets.ts` for the rest of the registry
+  (§9 "Adding a ticker"), a deliberate separate decision, not done here.
+- **Predict pages redesign — leaned on real (premium) data over empty (bet)
+  data.** Both `/predict` and `/predict/[ticker]` got denser: stat tiles,
+  premium badges + sparklines on every ticker card, `PremiumHistoryChart`
+  and `ImpliedProbabilityChart` side by side on the ticker page,
+  `PoolDominanceBars` on the index. As of this writing **zero real bets have
+  ever been placed** on the deployed `GapMarket` (confirmed via
+  `getContractEvents` — `BetPlaced` count 0), so every bet-derived widget
+  (implied-probability chart, pool bars, bettor counts) is currently showing
+  its empty state, not a bug. That's why the premium-derived pieces
+  (badges/sparklines/history chart — real data, 15-min snapshots since the
+  cron started) got priority placement over the bet-derived ones: the page
+  needed to look full today, not just once betting volume exists. All the
+  empty states are intentional and match the graceful-degradation pattern
+  used everywhere else (heatmap, history chart) — they explain what's
+  missing rather than hiding the section.
+- **`getPoolHistory()` fetches one block timestamp per unique block**
+  (`BetPlaced` only carries a block number). Cheap at zero-to-low bet
+  volume; if that changes, batch or cache these instead of one `getBlock`
+  call per unique block.
 
 ## 6. Commands
 
@@ -266,11 +507,14 @@ node scripts/gen-registry.mjs src/lib/registry.ts   # refresh the stock list
 node scripts/sync-predict-abi.mjs                   # refresh src/lib/predictAbi.ts after a Solidity change
 
 cd contracts
-npm test                        # 9 Hardhat tests (node:test + viem)
+npm test                        # 21 Hardhat tests (9 GapMarket + 12 PlayMarket)
 npm run push-prices              # mirror every ticker's real mainnet price into its testnet mock
-npm run create-markets            # create a new trading-session market for every ticker
-npm run create-weekend-markets      # create a new weekend-gap market for every ticker
-npm run deploy:testnet               # redeploy MockAggregator + GapMarket (new addresses!)
+npm run create-markets            # create a new GapMarket trading-session market for every ticker
+npm run create-weekend-markets      # create a new GapMarket weekend-gap market for every ticker
+npm run create-play-markets          # same, for PlayMarket (chips)
+npm run create-play-weekend-markets   # same, for PlayMarket (chips)
+npm run deploy:testnet               # redeploy MockAggregator + GapMarket (new address!)
+npm run deploy:testnet:play           # redeploy PlayMarket (new address!)
 ```
 
 Always run `npm run lint` and `npm run build` (root) and `npm test`
@@ -341,6 +585,25 @@ Done:
 - ~~RHAM rebrand~~ — site brand is now **RHAM** (header, `<title>`,
   homepage). "Implied Open" is the premium-dashboard feature's name within
   the platform, not the site name anymore — see the top of this file.
+- ~~Premium heatmap~~ — `/heatmap`, ticker×day grid off the same snapshot
+  files as the history chart. See §5.
+- ~~Predict leaderboard~~ — `/predict/leaderboard`, wallets ranked by ETH
+  claimed minus staked, read from contract events, no accounts. See §9.
+- ~~Recent bets list~~ — `RecentBets` on `/predict/[ticker]` shows every
+  `BetPlaced` for the current market (wallet, ETH amount, UP/DOWN), polling
+  every 15s. See §9.
+- ~~Public premium API + embeddable widget~~ — `/api/premium(/[ticker])`
+  (open CORS) and `/embed/[ticker]` (iframe-able card), with a copyable
+  snippet on each stock page. See §5.
+- ~~Session-aware premium breakdown~~ — `SessionBreakdown` on the stock page:
+  average premium by Weekend / After hours / Pre-market / Regular session.
+  See §5.
+- ~~Watchlist, inline sparklines, CoinGecko-style dashboard pass~~ — star
+  column, "Trend" sparkline column, homepage `HighlightCard` trio. See §5.
+- ~~PlayMarket: free weekly chips~~ — a second, parallel prediction-market
+  contract with zero financial stakes (weekly-reset 0.1 chip allowance, own
+  leaderboard, its own tab on every ticker's Predict page) alongside the
+  existing real-ETH GapMarket. See §9 "PlayMarket".
 
 Not yet built, ordered by logical next priority:
 
@@ -466,15 +729,104 @@ address that must be copied over by hand. Per-market feed addresses don't
 need frontend config at all — each market struct already stores its own
 `feed`, read directly off-chain.
 
+### PlayMarket: free weekly chips, no real money
+
+A second, parallel contract — not a mode flag on `GapMarket`. Added so people
+can play (and show up on a leaderboard) with zero financial stakes, whether
+or not/whenever GapMarket ever goes to mainnet. Structurally almost identical
+to `GapMarket.sol` (same `Market` struct, same permissionless lock/resolve,
+same pari-mutuel payout math in `claimableOf`) — the only real differences:
+
+- **`claimWeeklyChips()`** — anyone can claim once per week
+  (`block.timestamp / 7 days`, which lands on **Thursdays 00:00 UTC**, not
+  Mondays — the boundary is just Unix-epoch-aligned, epoch itself was a
+  Thursday). Claiming **resets** `chipBalance` to `WEEKLY_CHIPS` (0.1, same
+  18-decimal scale as ETH so every existing `formatEth`-style helper works
+  unchanged) — it does **not** add to the existing balance. Last week's
+  winnings or losses don't carry over, same spirit as a fantasy-football
+  weekly reset. This was an explicit user decision, not a default — don't
+  "fix" it into an additive/all-time balance.
+- **`placeBet(id, up, amount)` takes `amount` as an explicit argument**, not
+  `msg.value` — it debits `chipBalance` instead of requiring an ETH transfer.
+- **`claim()` credits `chipBalance` instead of sending ETH** — no external
+  call happens, so (unlike `GapMarket`) there's no reentrancy surface and no
+  `nonReentrant` guard on this contract.
+- Chips can never leave the contract — no withdraw, no transfer function.
+  They are not, and must never become, a real asset.
+
+Deployed at `0xa10910C5CA5f72FEeF0c9d587dD283CCF15384cD` (testnet), address
+hand-maintained in `PLAY_MARKET_ADDRESS` (`predictContracts.ts`), same
+pattern/caveat as `GAP_MARKET_ADDRESS`. Uses the **same** `tickers.json`
+MockAggregators as GapMarket (no separate oracle deploy) but its own separate
+set of markets, created via `contracts/scripts/create-play-markets.ts` /
+`create-play-weekend-markets.ts` (`npm run create-play-markets` /
+`create-play-weekend-markets`) — mirrors of the GapMarket scripts, just
+pointed at `PLAY_MARKET_ADDRESS`. `npm run deploy:testnet:play` redeploys the
+contract itself (new address, must be copied by hand, same as GapMarket).
+
+**Two hard-won gotchas from building this:**
+1. **Never reuse `formatEth()` for a chip amount.** Early versions did, and
+   every chip balance on the leaderboard/market cards read as "0.03 ETH" —
+   directly undermining the entire "no real money" premise of the feature.
+   `predictFormat.ts` has a dedicated `formatChips()` (identical math, labeled
+   "chips") — any component/page that renders both real and play amounts
+   (`RecentBets`, `LeaderboardTable`, the ticker page's `MarketStats`) takes
+   an explicit formatter/mode so this can't silently regress.
+2. **Function props cannot cross the Server→Client Component boundary at
+   all** — worse than the bigint gotcha above (which just needs
+   `.toString()`/`BigInt()`), passing an actual function reference (e.g.
+   `fetchBets={getPlayBetsForMarket}`) from a Server Component into a Client
+   Component throws outright at request time ("Functions cannot be passed
+   directly to Client Components..."), both server-side and as a browser
+   console error. `RecentBets` originally took `fetchBets`/`formatAmount`
+   function props to point it at either contract; fixed by taking a plain
+   `mode: "real" | "play"` string instead and resolving the actual
+   fetcher/formatter **inside** the client component, where those functions
+   already live. Any future component reused across GapMarket/PlayMarket
+   from a server-rendered page should follow this pattern, not pass functions
+   in as props.
+
+Parallel library code: `src/lib/playBets.ts` mirrors `predictBets.ts`
+(`getPlayBetsForMarket`, `getPlayWalletActivity`, `getPlayPoolHistory`,
+`getPlayOverview`) plus the one genuinely different piece —
+`getPlayLeaderboard()` filters `BetPlaced`/`Claimed` logs to the **current
+week only** (fetches one block timestamp per unique block, same approach as
+`getPoolHistory`) instead of all-time, since an all-time chip leaderboard
+would just reward whoever's been claiming longest. `currentWeekStart()` is
+the shared week-boundary helper (also exported for the leaderboard page's
+"since [date]" copy). `predictMarkets.ts` similarly gained
+`getAllPlayMarkets()`/`getLatestPlayMarketPerTicker()` — duplicated rather
+than parametrized by contract address/ABI, matching this project's existing
+preference for duplication over fighting generic ABI type inference for a
+two-contract case (see `scripts/create-play-markets.ts`'s comment).
+
+**Known gap:** the wallet tracker (`/predict/wallet/[address]` and
+`WalletTrackerDrawer`) still only shows **real-money** activity
+(`getWalletActivity`, GapMarket only) — looking up a wallet there won't show
+its chip bets. Extending it to show both wasn't part of the original ask;
+do it by giving `getPlayWalletActivity()` (already in `playBets.ts`) the
+same treatment `getWalletActivity` gets today, plus a real/play toggle in the
+UI.
+
 ### Pages & rendering
 
 - `/predict` — server-rendered index, one card per ticker with an active
-  market (grid, `TickerIcon` + name + state badge), linking to
-  `/predict/[ticker]`. No wallet, no client JS needed to see it.
-- `/predict/[ticker]` — the latest market for that ticker rendered full-size,
-  older ones collapsed into a `<details>` "Past sessions" block (same pattern
-  as the dashboard's low-liquidity section, §5). `ConnectWallet` lives here,
-  not in the root header — see below.
+  market (grid, `TickerIcon` + name + state badge, premium badge, premium
+  `MiniSparkline`, real-money pool split bar), linking to `/predict/[ticker]`.
+  A banner above the grid explains the two betting modes and links to the
+  leaderboard. No wallet, no client JS needed to see it. `PoolDominanceBars`
+  below the grid ranks tickers by all-time real-money ETH staked.
+- `/predict/[ticker]` — a shared header (premium badge, `PremiumHistoryChart`)
+  above `RealPlayTabs`, which switches between a real-money section
+  (`PredictMarketCard` + `RecentBets` + `ImpliedProbabilityChart` off
+  `getPoolHistory`) and a play-money section (`ClaimChipsButton` +
+  `PlayMarketCard` + `RecentBets mode="play"` + its own
+  `ImpliedProbabilityChart` off `getPlayPoolHistory`) — **each tab's content
+  is only mounted while active**, not just CSS-hidden, so the inactive tab's
+  wagmi polling hooks and `RecentBets` interval don't run for nothing. Older
+  markets per mode collapse into their own `<details>` "Past sessions" block
+  (same pattern as the dashboard's low-liquidity section, §5). `ConnectWallet`
+  lives here, not in the root header — see below.
 - `app/predict/[ticker]/layout.tsx` scopes `PredictProviders` (wagmi +
   react-query) to just this route, so the rest of the site — including the
   `/predict` index itself — doesn't load that bundle.
@@ -503,7 +855,9 @@ data. Every bigint that crosses that specific boundary must be
 `PredictMarketCard`'s `id` prop and `InitialMarket` interface, and
 `predictMarkets.ts`'s `toInitialMarket()`. This does **not** apply to
 client-to-client prop passing (e.g. within `PredictMarketCard` itself) or to
-values that stay server-side.
+values that stay server-side. `predictBets.ts`'s `SerializableBet`/
+`toSerializableBet()` follow the identical pattern for `RecentBets`' `initial`
+prop — copy that one too if you add another server→client event-log path.
 
 ### Nav flow
 
@@ -555,13 +909,26 @@ nav — it's a secondary entry point, not the primary one.
   snapshotter, once cadence/reliability needs justify it.
 - No market-creation UI — only `contracts/scripts/create-markets.ts` (owner
   key required).
-- No live event indexing — `PredictMarketCard` re-reads after *its own*
-  transactions confirm, not reactively on another user's bet. Fine for a
+- No *push* event indexing — `PredictMarketCard` re-reads after *its own*
+  transactions confirm; `RecentBets` now polls `getBetsForMarket` every 15s
+  (§5) so other users' bets do show up, just not instantly. Fine for a
   low-traffic testnet demo; would want `useWatchContractEvent` or a subgraph
-  at real scale.
+  for real-time updates and to avoid `getLeaderboard`'s unfiltered log scan
+  growing unbounded at real scale.
 - Adding a ticker beyond the current 8 means: add it to
   `deploy-mock-feeds.ts`'s `TICKERS` array, run it, then
-  `npm run create-markets` (or the singular scripts for just that one).
+  `npm run create-markets` (or the singular scripts for just that one) —
+  and, separately, `npm run create-play-markets` if PlayMarket should have
+  it too (the two contracts' ticker sets aren't required to match, they
+  just currently do).
+- Wallet tracker (`/predict/wallet/[address]`, `WalletTrackerDrawer`) only
+  covers real-money (GapMarket) activity — see "PlayMarket" above for what
+  extending it to chips would take.
+- No real-yield mechanic yet connecting the leaderboards to anything —
+  discussed as a future idea (top real-money leaderboard performers earning
+  a share of eventual $RHAM trading fees) but blocked on $RHAM not existing
+  and on the mainnet decision above; nothing to build here until both are
+  real.
 
 ## 10. Repository & collaboration
 

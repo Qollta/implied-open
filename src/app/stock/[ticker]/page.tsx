@@ -5,10 +5,14 @@ import AutoRefresh from "@/components/AutoRefresh";
 import PremiumBadge from "@/components/PremiumBadge";
 import PremiumHistoryChart from "@/components/PremiumHistoryChart";
 import ShareButton from "@/components/ShareButton";
+import WatchButton from "@/components/WatchButton";
+import EmbedSnippet from "@/components/EmbedSnippet";
 import TickerIcon from "@/components/TickerIcon";
 import { STOCK_BY_TICKER } from "@/lib/registry";
 import { getPremiums } from "@/lib/premium";
 import { getPremiumHistory } from "@/lib/history";
+import { getSessionBreakdown } from "@/lib/sessionBreakdown";
+import SessionBreakdown from "@/components/SessionBreakdown";
 import { getMarketStatus } from "@/lib/market";
 import { PREDICTABLE_TICKERS } from "@/lib/predictContracts";
 import { formatCompactUsd, formatPct, formatUsd, timeAgo } from "@/lib/format";
@@ -50,9 +54,10 @@ export default async function StockPage({
 
   const [rows, history] = await Promise.all([
     getPremiums().catch(() => []),
-    getPremiumHistory(stock.ticker),
+    getPremiumHistory(stock.ticker, 14),
   ]);
   const row = rows.find((r) => r.stock.ticker === stock.ticker);
+  const sessionStats = getSessionBreakdown(history);
   const market = getMarketStatus();
 
   return (
@@ -81,6 +86,7 @@ export default async function StockPage({
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          <WatchButton ticker={stock.ticker} size={20} />
           {(PREDICTABLE_TICKERS as readonly string[]).includes(stock.ticker) && (
             <Link
               href={`/predict/${stock.ticker}`}
@@ -148,12 +154,15 @@ export default async function StockPage({
           </div>
 
           <PremiumHistoryChart points={history} />
+          <SessionBreakdown stats={sessionStats} />
         </>
       ) : (
         <div className="rounded-xl border border-border bg-bg-secondary p-6 text-sm text-text-secondary">
           No live price data for {stock.ticker} right now.
         </div>
       )}
+
+      <EmbedSnippet ticker={stock.ticker} />
 
       <div className="rounded-xl border border-border bg-bg-secondary p-4 text-xs text-text-muted">
         <p>

@@ -3,8 +3,8 @@
 // client components re-read live via wagmi once a wallet is connected.
 import { createPublicClient, http } from "viem";
 import { robinhoodTestnet } from "./chains";
-import { GAP_MARKET_ADDRESS } from "./predictContracts";
-import { GAPMARKET_ABI } from "./predictAbi";
+import { GAP_MARKET_ADDRESS, PLAY_MARKET_ADDRESS } from "./predictContracts";
+import { GAPMARKET_ABI, PLAYMARKET_ABI } from "./predictAbi";
 import { tickerFromBytes32 } from "./predictFormat";
 import type { InitialMarket } from "@/components/PredictMarketCard";
 
@@ -75,6 +75,57 @@ export function toInitialMarket(m: MarketInfo): InitialMarket {
 /** Latest (highest-id) market per ticker. */
 export async function getLatestMarketPerTicker(): Promise<MarketInfo[]> {
   const markets = await getAllMarkets();
+  const latest = new Map<string, MarketInfo>();
+  for (const m of markets) {
+    const prev = latest.get(m.ticker);
+    if (!prev || m.id > prev.id) latest.set(m.ticker, m);
+  }
+  return [...latest.values()].sort((a, b) => a.ticker.localeCompare(b.ticker));
+}
+
+/**
+ * PlayMarket equivalents of the two functions above — same Market struct
+ * shape, different contract (chips, not ETH). Duplicated rather than
+ * parametrized: the two contracts' ABIs are distinct literal types, and
+ * this project prefers duplication over fighting generic ABI inference for
+ * a two-contract case (same reasoning as scripts/create-play-markets.ts).
+ */
+export async function getAllPlayMarkets(): Promise<MarketInfo[]> {
+  const count = await client.readContract({
+    address: PLAY_MARKET_ADDRESS,
+    abi: PLAYMARKET_ABI,
+    functionName: "marketCount",
+  });
+
+  const ids = Array.from({ length: Number(count) }, (_, i) => BigInt(i));
+  const markets = await Promise.all(
+    ids.map((id) =>
+      client.readContract({
+        address: PLAY_MARKET_ADDRESS,
+        abi: PLAYMARKET_ABI,
+        functionName: "markets",
+        args: [id],
+      }),
+    ),
+  );
+
+  return markets.map((m, i) => ({
+    id: ids[i],
+    ticker: tickerFromBytes32(m[0]),
+    feed: m[1],
+    locksAt: Number(m[2]),
+    resolvesAt: Number(m[3]),
+    startPrice: m[4],
+    endPrice: m[5],
+    upPool: m[6],
+    downPool: m[7],
+    state: m[8],
+    outcome: m[9],
+  }));
+}
+
+export async function getLatestPlayMarketPerTicker(): Promise<MarketInfo[]> {
+  const markets = await getAllPlayMarkets();
   const latest = new Map<string, MarketInfo>();
   for (const m of markets) {
     const prev = latest.get(m.ticker);

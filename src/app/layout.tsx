@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import WalletTrackerDrawer from "@/components/WalletTrackerDrawer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,15 +35,32 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <header className="border-b border-border bg-bg-secondary/60 backdrop-blur">
           <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-6">
-            <Link href="/" className="flex items-baseline gap-2">
-              <span className="text-lg font-bold tracking-tight text-accent">
-                RHAM
-              </span>
-              <span className="hidden text-xs text-text-muted sm:inline">
-                RobinHood Assets Market
-              </span>
-            </Link>
-            {/* Twitter/X and $RHAM links go here once they exist. */}
+            <div className="flex items-center gap-5">
+              <Link href="/" className="flex items-baseline gap-2">
+                <span className="text-lg font-bold tracking-tight text-accent">
+                  RHAM
+                </span>
+                <span className="hidden text-xs text-text-muted sm:inline">
+                  RobinHood Assets Market
+                </span>
+              </Link>
+              <Link
+                href="/heatmap"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                Heatmap
+              </Link>
+              <Link
+                href="/watchlist"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                Watchlist
+              </Link>
+            </div>
+            <div className="flex items-center gap-3">
+              <WalletTrackerDrawer />
+              {/* Twitter/X and $RHAM links go here once they exist. */}
+            </div>
           </div>
         </header>
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 lg:px-6">

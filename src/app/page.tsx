@@ -1,14 +1,17 @@
 import Link from "next/link";
 import AutoRefresh from "@/components/AutoRefresh";
 import PremiumTable from "@/components/PremiumTable";
+import HighlightCard from "@/components/HighlightCard";
 import { getPremiums } from "@/lib/premium";
+import { getSparklines } from "@/lib/sparkline";
 import { getMarketStatus } from "@/lib/market";
 import { formatPct } from "@/lib/format";
 
 export const revalidate = 30;
 
 export default async function Home() {
-  const [rows, market] = [await getPremiums(), getMarketStatus()];
+  const [rows, sparklines] = await Promise.all([getPremiums(), getSparklines()]);
+  const market = getMarketStatus();
   const liquid = rows.filter((r) => r.liquid);
   const illiquid = rows.filter((r) => !r.liquid);
 
@@ -17,6 +20,10 @@ export default async function Home() {
       ? liquid.reduce((s, r) => s + r.premiumPct, 0) / liquid.length
       : 0;
   const top = liquid[0];
+
+  const topGainers = [...liquid].filter((r) => r.premiumPct > 0).sort((a, b) => b.premiumPct - a.premiumPct).slice(0, 5);
+  const topLosers = [...liquid].filter((r) => r.premiumPct < 0).sort((a, b) => a.premiumPct - b.premiumPct).slice(0, 5);
+  const mostLiquid = [...liquid].sort((a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0)).slice(0, 5);
 
   return (
     <div className="flex flex-col gap-6">
@@ -67,12 +74,13 @@ export default async function Home() {
           </h2>
           <p className="mt-2 text-sm text-text-secondary">
             Non-custodial markets, resolved entirely on-chain, no admin
-            deciding the outcome. Two kinds:{" "}
+            deciding the outcome — bet with real ETH or{" "}
+            <strong className="text-text-primary">free weekly chips</strong>{" "}
+            (0.1, reset every week, its own leaderboard). Two kinds of market:{" "}
             <strong className="text-text-primary">weekend gap</strong> — will
             Friday&apos;s close open higher or lower on Monday — and{" "}
             <strong className="text-text-primary">trading session</strong> —
-            up or down between the open and close of a single session. Same
-            contract, same mechanic, just a different pair of timestamps.
+            up or down between the open and close of a single session.
           </p>
         </Link>
       </section>
@@ -122,7 +130,13 @@ export default async function Home() {
         </div>
       </section>
 
-      <PremiumTable rows={liquid} />
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <HighlightCard title="🔥 Top Gainers" rows={topGainers} metric="premium" />
+        <HighlightCard title="🔻 Top Losers" rows={topLosers} metric="premium" />
+        <HighlightCard title="💧 Most Liquid" rows={mostLiquid} metric="volume" />
+      </section>
+
+      <PremiumTable rows={liquid} sparklines={sparklines} />
 
       {illiquid.length > 0 && (
         <details className="rounded-xl border border-border bg-bg-secondary/50 px-4 py-3">

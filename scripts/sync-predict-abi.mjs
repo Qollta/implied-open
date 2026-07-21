@@ -9,6 +9,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 const CONTRACTS = [
   { name: "GapMarket", artifact: "contracts/artifacts/contracts/GapMarket.sol/GapMarket.json" },
+  { name: "PlayMarket", artifact: "contracts/artifacts/contracts/PlayMarket.sol/PlayMarket.json" },
   { name: "MockAggregator", artifact: "contracts/artifacts/contracts/MockAggregator.sol/MockAggregator.json" },
 ];
 

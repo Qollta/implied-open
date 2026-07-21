@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { robinhoodTestnet } from "@/lib/chains";
-
-function truncate(addr: string): string {
-  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-}
+import { truncateAddress } from "@/lib/predictFormat";
 
 /**
  * Wallet picker. wagmi auto-discovers one connector per installed EIP-6963
@@ -109,7 +106,7 @@ export default function ConnectWallet() {
       onClick={() => disconnect()}
       className="mono rounded-lg border border-border bg-bg-secondary px-4 py-1.5 text-sm text-text-primary transition-colors hover:border-accent"
     >
-      {truncate(address!)}
+      {truncateAddress(address!)}
     </button>
   );
 }

@@ -5,6 +5,10 @@ export function tickerFromBytes32(hex: `0x${string}`): string {
   return hexToString(hex).replace(/\0+$/, "");
 }
 
+export function truncateAddress(addr: string): string {
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
 /** Chainlink-style price: 8 decimals. */
 export function formatFeedPrice(answer: bigint): string {
   return (Number(answer) / 1e8).toLocaleString("en-US", {
@@ -18,6 +22,12 @@ export function formatFeedPrice(answer: bigint): string {
 export function formatEth(wei: bigint): string {
   const eth = Number(formatEther(wei));
   return `${eth.toLocaleString("en-US", { maximumFractionDigits: 4 })} ETH`;
+}
+
+/** Same math as formatEth, but labeled "chips" — PlayMarket amounts are a virtual unit, not real ETH, and must never read as if they were. */
+export function formatChips(wei: bigint): string {
+  const chips = Number(formatEther(wei));
+  return `${chips.toLocaleString("en-US", { maximumFractionDigits: 4 })} chips`;
 }
 
 export function formatCountdown(targetUnix: number, nowUnix: number): string {
