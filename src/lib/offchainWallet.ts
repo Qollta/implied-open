@@ -26,7 +26,7 @@ import { randomUUID, createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { formatEther, parseEther } from "viem";
-import { Redis } from "@upstash/redis";
+import { getRedisClient } from "./redis";
 import { getPremiums } from "./premium";
 
 const STORE_PATH = join(process.cwd(), "data", "offchain-play.json");
@@ -82,17 +82,8 @@ function emptyStore(): Store {
   return { wallets: {}, marketsByTicker: {}, lastWeekRolloverWeek: null };
 }
 
-let redisClient: Redis | null | undefined; // undefined = not checked yet, null = not configured
-function getRedis(): Redis | null {
-  if (redisClient !== undefined) return redisClient;
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  redisClient = url && token ? new Redis({ url, token }) : null;
-  return redisClient;
-}
-
 async function readStore(): Promise<Store> {
-  const redis = getRedis();
+  const redis = getRedisClient();
   if (redis) {
     const data = await redis.get<Store>(REDIS_KEY);
     return data ?? emptyStore();
@@ -105,7 +96,7 @@ async function readStore(): Promise<Store> {
 }
 
 async function writeStore(store: Store): Promise<void> {
-  const redis = getRedis();
+  const redis = getRedisClient();
   if (redis) {
     await redis.set(REDIS_KEY, store);
     return;

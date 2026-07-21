@@ -6,7 +6,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { Redis } from "@upstash/redis";
+import { getRedisClient } from "./redis";
 import { pseudoAddress } from "./offchainWallet";
 
 const STORE_PATH = join(process.cwd(), "data", "comments.json");
@@ -32,17 +32,8 @@ function emptyStore(): Store {
   return { byTicker: {}, lastPostAt: {} };
 }
 
-let redisClient: Redis | null | undefined;
-function getRedis(): Redis | null {
-  if (redisClient !== undefined) return redisClient;
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  redisClient = url && token ? new Redis({ url, token }) : null;
-  return redisClient;
-}
-
 async function readStore(): Promise<Store> {
-  const redis = getRedis();
+  const redis = getRedisClient();
   if (redis) {
     const data = await redis.get<Store>(REDIS_KEY);
     return data ?? emptyStore();
@@ -55,7 +46,7 @@ async function readStore(): Promise<Store> {
 }
 
 async function writeStore(store: Store): Promise<void> {
-  const redis = getRedis();
+  const redis = getRedisClient();
   if (redis) {
     await redis.set(REDIS_KEY, store);
     return;
