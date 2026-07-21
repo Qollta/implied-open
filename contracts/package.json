@@ -2,7 +2,7 @@
   "name": "rham-contracts",
   "version": "0.1.0",
   "private": true,
-  "description": "GapMarket prediction-market contracts for RHAM (Robinhood Chain testnet)",
+  "description": "GapMarket prediction-market contracts for RWAM (Robinhood Chain testnet)",
   "type": "module",
   "scripts": {
     "compile": "hardhat compile",

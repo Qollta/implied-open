@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3100"),
-  title: "RHAM — RobinHood Assets Market",
+  title: "RWAM — Real World Assets Market on Robinhood Chain",
   description:
-    "RHAM tracks and lets you bet on real-world stocks tokenized on Robinhood Chain — the live premium while markets are closed, and non-custodial prediction markets on whether a stock opens higher or lower, both across the weekend and during the trading session.",
+    "RWAM tracks and lets you bet on real-world stocks tokenized on Robinhood Chain — the live premium while markets are closed, and non-custodial prediction markets on whether a stock opens higher or lower, both across the weekend and during the trading session.",
   twitter: { card: "summary_large_image" },
 };
 
@@ -39,10 +39,10 @@ export default function RootLayout({
             <div className="flex items-center gap-5">
               <Link href="/" className="flex items-baseline gap-2">
                 <span className="text-lg font-bold tracking-tight text-accent">
-                  RHAM
+                  RWAM
                 </span>
                 <span className="hidden text-xs text-text-muted sm:inline">
-                  RobinHood Assets Market
+                  Real World Assets Market on Robinhood Chain
                 </span>
               </Link>
               <Link
@@ -96,7 +96,7 @@ export default function RootLayout({
             </div>
             <div className="flex items-center gap-3">
               <WalletTrackerDrawer />
-              {/* Twitter/X and $RHAM links go here once they exist. */}
+              {/* Twitter/X and $RWAM links go here once they exist. */}
             </div>
           </div>
         </header>

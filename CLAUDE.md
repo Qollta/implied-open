@@ -1,18 +1,23 @@
 @AGENTS.md
 
-# RHAM (RobinHood Assets Market) — formerly "Implied Open"
+# RWAM (Real World Assets Market on Robinhood Chain) — formerly "RHAM", formerly "Implied Open"
 
-The site's brand is **RHAM** (header, page title, homepage). "Implied Open"
-is kept as the name of the read-only premium-tracking feature specifically
-(§1) — think product name within the platform, not a separate site. The
-prediction market (§9) is the platform's other half, under "Predict".
-Package/directory names, most internal comments, and OG image copy still say
-"Implied Open" in places — that's fine, not worth a mechanical rename; treat
-"RHAM" as the current source of truth for anything user-facing (header,
-`<title>`, homepage copy) and "Implied Open" as accurate everywhere else
-unless you're touching that code anyway.
+The site's brand is **RWAM** (header, page title, homepage) — renamed from
+"RHAM" (RobinHood Assets Market) to broaden the name beyond Robinhood
+specifically while keeping "on Robinhood Chain" as an explicit qualifier,
+since every data source/feed/ticker is still Robinhood-Chain-specific today.
+Full tagline: "RWAM — Real World Assets Market on Robinhood Chain". "Implied
+Open" is kept as the name of the read-only premium-tracking feature
+specifically (§1) — think product name within the platform, not a separate
+site. The prediction market (§9) is the platform's other half, under
+"Predict". Package/directory names, most internal comments, and OG image
+copy still say "Implied Open" (and some still say "RHAM") in places — that's
+fine, not worth a mechanical rename; treat "RWAM" as the current source of
+truth for anything user-facing (header, `<title>`, homepage copy) and
+"Implied Open" as accurate everywhere else unless you're touching that code
+anyway.
 
-RHAM tracks *and* lets you bet on the live premium or discount between
+RWAM tracks *and* lets you bet on the live premium or discount between
 Robinhood's tokenized stocks (trading 24/7 on Robinhood Chain DEXes) and
 their official, market-hours-only closing price (Chainlink). This file is
 the single source of truth for a fresh Claude session — read it first, then
@@ -200,7 +205,7 @@ src/
                                 `WalletTrackerDrawer` trigger. `GlobalStatsBar`
                                 renders as its own strip directly under the
                                 header, on every page — §5 "CoinGecko-style
-                                global stats bar". No Twitter/$RHAM links yet
+                                global stats bar". No Twitter/$RWAM links yet
                                 (real URLs not decided — don't add
                                 placeholders)
   components/
@@ -688,6 +693,11 @@ Done:
 - ~~RHAM rebrand~~ — site brand is now **RHAM** (header, `<title>`,
   homepage). "Implied Open" is the premium-dashboard feature's name within
   the platform, not the site name anymore — see the top of this file.
+- ~~RWAM rebrand (from RHAM)~~ — site brand changed again, from "RHAM"
+  (RobinHood Assets Market) to **RWAM** (Real World Assets Market on
+  Robinhood Chain) — see the top of this file for why. Same scope as the
+  RHAM rebrand above: header, `<title>`, homepage copy, `/how-it-works`, the
+  embed widget's brand line, plus the shareable X banner/avatar artwork.
 - ~~Premium heatmap~~ — `/heatmap`, ticker×day grid off the same snapshot
   files as the history chart. See §5.
 - ~~Predict leaderboard~~ — `/predict/leaderboard`, wallets ranked by ETH
@@ -736,8 +746,8 @@ Done:
 
 Not yet built, ordered by logical next priority:
 
-1. **Twitter/X and $RHAM header links** — explicitly asked for, but no real
-   URLs exist yet (no X account, no $RHAM page/token launched). Don't add
+1. **Twitter/X and $RWAM header links** — explicitly asked for, but no real
+   URLs exist yet (no X account, no $RWAM page/token launched). Don't add
    placeholder or guessed links — wire them in as soon as both exist.
 2. **Gap-prediction accuracy stat** — now that history exists: "the premium
    correctly predicted the direction of the next open in X% of cases over
@@ -1184,24 +1194,22 @@ needs nothing, so it's the tab that should be immediately visible.
   extending it to chips would take.
 - No real-yield mechanic yet connecting the leaderboards to anything —
   discussed as a future idea (top real-money leaderboard performers earning
-  a share of eventual $RHAM trading fees) but blocked on $RHAM not existing
+  a share of eventual $RWAM trading fees) but blocked on $RWAM not existing
   and on the mainnet decision above; nothing to build here until both are
   real.
 
 ## 10. Repository & collaboration
 
 - **Remote:** `https://github.com/Qollta/implied-open` (private).
-- No collaborators yet (solo project so far, unlike RH Explorer which is
-  shared with `bnbhacker`).
+- No longer solo — a second contributor pushes to `master` too (seen in
+  deploy history as `AxiomerS`), same two-person-repo shape as RH Explorer.
+  `git log`/`git status` are authoritative for current state.
 - Commits so far have no `Co-Authored-By` trailer — keep it that way on this
   repo.
-- Prefer small, frequent commits, same conventions as RH Explorer's workflow
-  if this becomes a shared repo too.
-- **As of this writing, the entire `/predict` feature + RHAM rebrand is
-  uncommitted** (everything since the "Add shareable X cards and premium
-  history snapshotting" commit — `git log`/`git status` are authoritative,
-  this note will go stale). That includes `contracts/` itself, which isn't
-  tracked yet either, and the subsequent fETH off-chain rewrite (§9) + the
-  `/how-it-works` page. Worth committing in reviewable chunks rather than one
-  giant commit, given the size — check with the user first either way, per
-  standing instructions to only commit when asked.
+- Prefer small, frequent commits, same conventions as RH Explorer's workflow.
+- **Deployed on Vercel**, connected to this repo's `master` branch — every
+  push auto-deploys to production. Custom domain: `rwam.digital` (DNS/SSL
+  configured by the second contributor). `UPSTASH_REDIS_REST_URL`/`TOKEN`
+  (or the Marketplace-integration equivalents `UPSTASH_REDIS_REST_KV_REST_API_URL`/
+  `TOKEN` — see `lib/redis.ts`) and `NEXT_PUBLIC_SITE_URL` are set as Vercel
+  env vars, not in this repo.
