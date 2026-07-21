@@ -3,13 +3,16 @@
 import { useState, type ReactNode } from "react";
 
 /**
- * Switches between the real-money (GapMarket) and play-money (PlayMarket)
- * sections of a ticker's Predict page. Both sections are pre-rendered by the
- * server (data-fetched there) and just passed in as children — this
- * component only toggles which one is visible, no data of its own.
+ * Switches between the real-money (GapMarket) and fETH (off-chain) sections
+ * of a ticker's Predict page. Both sections are pre-rendered by the server
+ * (data-fetched there) and just passed in as children — this component only
+ * toggles which one is visible, no data of its own. Defaults to fETH: it
+ * needs no wallet, so it's the tab most first-time visitors can actually use
+ * — defaulting to "real" buried the no-wallet-needed option behind an extra
+ * click that people were missing entirely.
  */
 export default function RealPlayTabs({ real, play }: { real: ReactNode; play: ReactNode }) {
-  const [tab, setTab] = useState<"real" | "play">("real");
+  const [tab, setTab] = useState<"real" | "play">("play");
 
   return (
     <div className="flex flex-col gap-6">
@@ -30,7 +33,7 @@ export default function RealPlayTabs({ real, play }: { real: ReactNode; play: Re
             tab === "play" ? "bg-accent text-black" : "text-text-secondary hover:text-text-primary"
           }`}
         >
-          🎮 Play money
+          🎮 fETH
         </button>
       </div>
 

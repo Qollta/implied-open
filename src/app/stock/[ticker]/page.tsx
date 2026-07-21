@@ -6,7 +6,6 @@ import PremiumBadge from "@/components/PremiumBadge";
 import PremiumHistoryChart from "@/components/PremiumHistoryChart";
 import ShareButton from "@/components/ShareButton";
 import WatchButton from "@/components/WatchButton";
-import EmbedSnippet from "@/components/EmbedSnippet";
 import TickerIcon from "@/components/TickerIcon";
 import { STOCK_BY_TICKER } from "@/lib/registry";
 import { getPremiums } from "@/lib/premium";
@@ -161,8 +160,6 @@ export default async function StockPage({
           No live price data for {stock.ticker} right now.
         </div>
       )}
-
-      <EmbedSnippet ticker={stock.ticker} />
 
       <div className="rounded-xl border border-border bg-bg-secondary p-4 text-xs text-text-muted">
         <p>

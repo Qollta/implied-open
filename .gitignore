@@ -32,9 +32,15 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
+
+# runtime state for the off-chain fETH wallet/market store (lib/offchainWallet.ts) —
+# local dev only, not meant to be committed (unlike data/premium-history/*.jsonl,
+# which is intentionally committed history from a cron)
+/data/offchain-play.json
 
 # typescript
 *.tsbuildinfo

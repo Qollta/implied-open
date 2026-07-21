@@ -5,18 +5,19 @@ import PremiumBadge from "@/components/PremiumBadge";
 import ConnectWallet from "@/components/ConnectWallet";
 import MyActivityLink from "@/components/MyActivityLink";
 import PredictMarketCard from "@/components/PredictMarketCard";
-import PlayMarketCard from "@/components/PlayMarketCard";
+import PlayMarketCard, { ResolvedFPlayMarket } from "@/components/PlayMarketCard";
 import ClaimChipsButton from "@/components/ClaimChipsButton";
 import RecentBets from "@/components/RecentBets";
 import RealPlayTabs from "@/components/RealPlayTabs";
 import PremiumHistoryChart from "@/components/PremiumHistoryChart";
 import ImpliedProbabilityChart from "@/components/ImpliedProbabilityChart";
-import { getAllMarkets, getAllPlayMarkets, toInitialMarket } from "@/lib/predictMarkets";
+import { getAllMarkets, toInitialMarket } from "@/lib/predictMarkets";
 import { getBetsForMarket, getPoolHistory, toSerializableBet } from "@/lib/predictBets";
-import { getPlayBetsForMarket, getPlayPoolHistory } from "@/lib/playBets";
+import { getMarketView, getPoolHistoryView, peekWalletId } from "@/lib/offchainWallet";
 import { getPremiums } from "@/lib/premium";
 import { getPremiumHistory } from "@/lib/history";
 import { STOCK_BY_TICKER } from "@/lib/registry";
+import { PREDICTABLE_TICKERS } from "@/lib/predictContracts";
 import { formatChips, formatEth } from "@/lib/predictFormat";
 
 export async function generateMetadata({
@@ -30,7 +31,7 @@ export async function generateMetadata({
   return {
     title: `${t} — Predict — Implied Open`,
     description: stock
-      ? `Bet whether ${stock.name} (${t}) rises or falls during the trading session on Robinhood Chain — real ETH or free weekly chips.`
+      ? `Bet whether ${stock.name} (${t}) rises or falls during the trading session on Robinhood Chain — real ETH or free weekly fETH, no wallet needed for fETH.`
       : `Bet on ${t} during the trading session on Robinhood Chain.`,
   };
 }
@@ -43,24 +44,21 @@ export default async function PredictTickerPage({
   const { ticker: rawTicker } = await params;
   const ticker = rawTicker.toUpperCase();
   const stock = STOCK_BY_TICKER.get(ticker);
+  const isFEthTicker = (PREDICTABLE_TICKERS as readonly string[]).includes(ticker);
 
-  const [allMarkets, allPlayMarkets] = await Promise.all([
-    getAllMarkets().catch(() => []),
-    getAllPlayMarkets().catch(() => []),
-  ]);
+  const allMarkets = await getAllMarkets().catch(() => []);
   const marketsForTicker = allMarkets.filter((m) => m.ticker === ticker).sort((a, b) => Number(b.id - a.id));
-  const playMarketsForTicker = allPlayMarkets.filter((m) => m.ticker === ticker).sort((a, b) => Number(b.id - a.id));
 
-  if (!stock && marketsForTicker.length === 0 && playMarketsForTicker.length === 0) notFound();
+  if (!stock && marketsForTicker.length === 0 && !isFEthTicker) notFound();
 
   const latestMarket = marketsForTicker[0];
-  const latestPlayMarket = playMarketsForTicker[0];
+  const walletId = await peekWalletId();
 
-  const [latestBets, poolHistory, latestPlayBets, playPoolHistory, premiums, premiumHistory] = await Promise.all([
+  const [latestBets, poolHistory, fplayDetail, fplayPoolHistory, premiums, premiumHistory] = await Promise.all([
     latestMarket ? getBetsForMarket(latestMarket.id).catch(() => []) : Promise.resolve([]),
     latestMarket ? getPoolHistory(latestMarket.id).catch(() => []) : Promise.resolve([]),
-    latestPlayMarket ? getPlayBetsForMarket(latestPlayMarket.id).catch(() => []) : Promise.resolve([]),
-    latestPlayMarket ? getPlayPoolHistory(latestPlayMarket.id).catch(() => []) : Promise.resolve([]),
+    isFEthTicker ? getMarketView(ticker, walletId).catch(() => null) : Promise.resolve(null),
+    isFEthTicker ? getPoolHistoryView(ticker).catch(() => []) : Promise.resolve([]),
     getPremiums().catch(() => []),
     stock ? getPremiumHistory(stock.ticker, 14) : Promise.resolve([]),
   ]);
@@ -99,24 +97,25 @@ export default async function PredictTickerPage({
   const playSection = (
     <>
       <ClaimChipsButton />
-      <MarketStats market={latestPlayMarket} bets={latestPlayBets} label="chips" formatAmount={formatChips} />
-      <ImpliedProbabilityChart points={playPoolHistory} />
-      {latestPlayMarket ? (
+      {fplayDetail ? (
         <>
-          <PlayMarketCard id={latestPlayMarket.id.toString()} initial={toInitialMarket(latestPlayMarket)} />
-          <RecentBets
-            marketId={latestPlayMarket.id.toString()}
-            initial={latestPlayBets.map(toSerializableBet)}
-            mode="play"
+          <MarketStats
+            market={{ upPool: BigInt(fplayDetail.market.upPool), downPool: BigInt(fplayDetail.market.downPool) }}
+            bets={fplayDetail.bets.map((b) => ({ user: b.address as `0x${string}` }))}
+            label="fETH"
+            formatAmount={formatChips}
           />
-          {playMarketsForTicker.length > 1 && (
+          <ImpliedProbabilityChart points={fplayPoolHistory} />
+          <PlayMarketCard ticker={ticker} initial={fplayDetail.market} />
+          <RecentBets ticker={ticker} initialFPlayBets={fplayDetail.bets} mode="play" />
+          {fplayDetail.history.length > 0 && (
             <details className="rounded-xl border border-border bg-bg-secondary/50 px-4 py-3">
               <summary className="cursor-pointer text-sm text-text-secondary">
-                Past sessions ({playMarketsForTicker.length - 1})
+                Past sessions ({fplayDetail.history.length})
               </summary>
               <div className="mt-3 flex flex-col gap-4">
-                {playMarketsForTicker.slice(1).map((m) => (
-                  <PlayMarketCard key={m.id.toString()} id={m.id.toString()} initial={toInitialMarket(m)} />
+                {fplayDetail.history.map((m) => (
+                  <ResolvedFPlayMarket key={m.id} market={m} />
                 ))}
               </div>
             </details>
@@ -124,7 +123,7 @@ export default async function PredictTickerPage({
         </>
       ) : (
         <div className="rounded-xl border border-border bg-bg-secondary p-10 text-center text-sm text-text-secondary">
-          No play-money markets for {ticker} yet.
+          No fETH market for {ticker} yet.
         </div>
       )}
     </>

@@ -24,10 +24,10 @@ export function formatEth(wei: bigint): string {
   return `${eth.toLocaleString("en-US", { maximumFractionDigits: 4 })} ETH`;
 }
 
-/** Same math as formatEth, but labeled "chips" — PlayMarket amounts are a virtual unit, not real ETH, and must never read as if they were. */
+/** Same math as formatEth, but labeled "fETH" (fake ETH) — PlayMarket/off-chain-wallet amounts are a virtual unit, not real ETH, and must never read as if they were. */
 export function formatChips(wei: bigint): string {
   const chips = Number(formatEther(wei));
-  return `${chips.toLocaleString("en-US", { maximumFractionDigits: 4 })} chips`;
+  return `${chips.toLocaleString("en-US", { maximumFractionDigits: 4 })} fETH`;
 }
 
 export function formatCountdown(targetUnix: number, nowUnix: number): string {

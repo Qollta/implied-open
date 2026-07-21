@@ -170,17 +170,39 @@ src/
                                 plus a WalletSearch box — §9
     predict/wallet/[address]/page.tsx  One wallet's full bet history +
                                 staked/claimed/net, joined against live
-                                market state — §9
+                                market state — §9 (real-money only, see
+                                "fETH: the off-chain internal wallet")
+    how-it-works/page.tsx       Static explainer: premium tracker, real-ETH
+                                UP/DOWN (session + weekend-gap), the fETH
+                                internal wallet, and its weekly prize draw —
+                                see §9 "fETH". Linked from the header nav and
+                                the homepage hero.
+    api/wallet/route.ts          GET — lazily creates + returns the caller's
+                                off-chain fETH wallet (id/address/balance) —
+                                §9 "fETH"
+    api/wallet/claim/route.ts    POST — claims this week's free 0.1 fETH (+
+                                any pending champion bonus) — §9 "fETH"
+    api/fplay/[ticker]/route.ts   GET the ticker's current fETH market (bets,
+                                my position, past sessions) / POST a bet —
+                                §9 "fETH"
+    api/fplay/leaderboard/route.ts  GET this week's fETH leaderboard + last
+                                week's champion — §9 "fETH"
     watchlist/page.tsx           Server-fetches the same data as the
                                 dashboard, hands it to `WatchlistTable` to
                                 filter client-side by localStorage — §5
                                 "Watchlist"
-    layout.tsx, globals.css    Dark theme, header/footer. Header has **no**
-                                "Predict" link (removed deliberately, see §9
-                                "Nav flow") but does have "Heatmap"/"Watchlist"
-                                links and the global `WalletTrackerDrawer`
-                                trigger; no Twitter/$RHAM links yet (real URLs
-                                not decided — don't add placeholders)
+    layout.tsx, globals.css    Dark theme, header/footer. Header nav:
+                                "Predict"/"Leaderboard"/"How it
+                                works"/"Heatmap"/"Watchlist" links (Predict +
+                                Leaderboard were deliberately left out
+                                originally, then added back — see §9 "Nav
+                                flow" for why) and the global
+                                `WalletTrackerDrawer` trigger. `GlobalStatsBar`
+                                renders as its own strip directly under the
+                                header, on every page — §5 "CoinGecko-style
+                                global stats bar". No Twitter/$RHAM links yet
+                                (real URLs not decided — don't add
+                                placeholders)
   components/
     PremiumTable.tsx           Client component, sortable (premium/volume/price).
                                 Takes an optional `sparklines` prop (adds a
@@ -194,6 +216,17 @@ src/
                                 `useWatchlist()` — §5
     HighlightCard.tsx             Server component, one ranked mini-list
                                 (Top Gainers / Top Losers / Most Liquid) — §5
+    GlobalStatsBar.tsx             Server component, CoinGecko-style thin
+                                stats strip mounted once in root `layout.tsx`
+                                — tokens tracked, avg premium, 24h volume,
+                                this week's fETH players/staked, a
+                                leaderboard link. Deliberately only uses
+                                `getPremiums()` (already ISR-cached) and the
+                                cheap fETH overview — NOT the real-money
+                                Predict overview, which scans on-chain event
+                                logs and would be too expensive to run on
+                                every single page site-wide — §5 "CoinGecko-
+                                style global stats bar"
     MiniSparkline.tsx              Tiny non-interactive SVG trend line for a
                                 table cell — §5
     PremiumBadge.tsx           Colored +/-% pill, `size="sm"|"lg"`
@@ -203,7 +236,16 @@ src/
                                 cursor tooltip, bullish/bearish summary — §5
     SessionBreakdown.tsx        Server component, avg premium per NYSE session — §5
     ShareButton.tsx            Opens a prefilled X/Twitter intent window
-    EmbedSnippet.tsx             Copyable <iframe> snippet for /embed/[ticker] — §3
+    EmbedSnippet.tsx             Copyable <iframe> snippet for /embed/[ticker].
+                                **No longer rendered on the stock page** —
+                                removed as confusing/unwanted clutter for
+                                visitors; the component and the underlying
+                                `/embed/[ticker]` route + public API (§3) are
+                                untouched, just not surfaced in the UI
+                                anymore. Re-add `<EmbedSnippet ticker={...} />`
+                                to stock/[ticker]/page.tsx if this should come
+                                back (e.g. behind a more clearly-labeled
+                                "for developers" section) — §3
     TickerIcon.tsx             Robinhood CDN logo w/ fallback badge on error
     TimeAgo.tsx                 Corrects a server-rendered relative time on
                                 mount — see §7 "hydration mismatch" gotcha
@@ -213,20 +255,38 @@ src/
     PredictMarketCard.tsx        One real-money (GapMarket) prediction market:
                                 pools, countdown, bet/lock/resolve/claim,
                                 weekend-vs-session badge — §9
-    PlayMarketCard.tsx             Chips-only sibling of PredictMarketCard —
-                                same UI, `placeBet` takes an explicit `amount`
-                                arg instead of `msg.value`, amounts formatted
-                                with `formatChips` not `formatEth` — §9
-    ClaimChipsButton.tsx           Shows chip balance + "claim this week's
-                                chips" button/countdown — §9
+    PlayMarketCard.tsx             fETH sibling of PredictMarketCard — same
+                                UI, but wallet-free: reads/writes the current
+                                ticker's off-chain market through
+                                `/api/fplay/[ticker]` (no wagmi, no on-chain
+                                tx), amounts formatted with `formatChips` (→
+                                "fETH" label) not `formatEth`. Listens for
+                                `WALLET_UPDATED_EVENT` (lib/walletEvents.ts) so
+                                its balance stays in sync with
+                                `ClaimChipsButton`'s — see §9 "fETH" for the
+                                bug this fixes. Also exports
+                                `ResolvedFPlayMarket`, a static (non-polling)
+                                summary used for past-session history items —
+                                §9 "fETH"
+    ClaimChipsButton.tsx           Shows the caller's off-chain fETH balance +
+                                pseudo-address + "claim this week's fETH"
+                                button/countdown, via `/api/wallet` —
+                                no wallet connect. Dispatches/listens for
+                                `WALLET_UPDATED_EVENT` — §9 "fETH"
     RealPlayTabs.tsx                Client, switches between pre-rendered
-                                real/play sections — **unmounts** the
+                                real/fETH sections — **unmounts** the
                                 inactive one (not just CSS-hidden) so its
-                                wagmi polling hooks stop running — §9
+                                wagmi/poll hooks stop running. **Defaults to
+                                the fETH tab**, not real money — see §9 "Nav
+                                flow" for why
     LeaderboardTable.tsx            Shared table for both leaderboards, takes
                                 an optional `formatAmount` (defaults
                                 `formatEth`; leaderboard page passes
-                                `formatChips` for the play tab) — §9
+                                `formatChips` for the fETH tab) and
+                                `linkWallets` (default true; fETH tab passes
+                                `false` since a pseudo-address has no
+                                `/predict/wallet/[address]` activity to link
+                                to) — §9
     ImpliedProbabilityChart.tsx   Filled-area SVG: share of the pool on UP
                                 over time, from `getPoolHistory()`/
                                 `getPlayPoolHistory()` — the pari-mutuel
@@ -236,14 +296,16 @@ src/
     PoolDominanceBars.tsx          Ranked bar list, % of all-time ETH staked
                                 per ticker — CoinGecko-dominance-chart shape,
                                 on `/predict` — §9
-    RecentBets.tsx                Live BetPlaced feed for one market (wallet,
+    RecentBets.tsx                Live bet feed for one market (wallet,
                                 amount, UP/DOWN) — server initial + client
-                                poll every 15s, no subgraph. Takes `mode:
-                                "real"|"play"` (a plain string, **not** a
-                                function prop — see §9 "PlayMarket" for why
-                                that specific mistake breaks outright) to
-                                pick GapMarket vs PlayMarket's reader/
-                                formatter — §9
+                                poll every 15s. `mode="real"` reads
+                                GapMarket's BetPlaced events by `marketId`
+                                (no subgraph); `mode="play"` polls
+                                `/api/fplay/[ticker]` by `ticker` instead —
+                                fETH bets have no on-chain event to read.
+                                `mode` is a plain string, **not** a function
+                                prop (see §9 "PlayMarket" for why that
+                                specific mistake breaks outright) — §9
     WalletSearch.tsx               Client, address input → /predict/wallet/[address]
                                 (viem `isAddress` validation) — §9
     MyActivityLink.tsx              Client, `useAccount()`-based "My bets →"
@@ -304,12 +366,36 @@ src/
                                 (getBetsForMarket, getLeaderboard,
                                 getWalletActivity, getPredictOverview,
                                 getPoolHistory) — no subgraph, see §9
-    playBets.ts                    PlayMarket equivalent of predictBets.ts —
-                                getPlayBetsForMarket, getPlayWalletActivity,
-                                getPlayOverview, getPlayPoolHistory, and
-                                getPlayLeaderboard (this-week-only, unlike
-                                the all-time real leaderboard — see §9) —
-                                also exports currentWeekStart() — §9
+    playBets.ts                    PlayMarket (on-chain chips contract)
+                                equivalent of predictBets.ts — **no longer
+                                imported by any page/component** since the
+                                fETH tab moved off-chain (see §9 "fETH"); left
+                                in place, not deleted, in case the on-chain
+                                chips path is ever revived. Don't be misled
+                                into thinking it's what the fETH tab reads —
+                                that's offchainWallet.ts now.
+    offchainWallet.ts              The fETH internal wallet + off-chain
+                                PlayMarket-equivalent — cookie-based identity
+                                (getOrCreateWalletId/peekWalletId), weekly
+                                claim (claimWeeklyFEth), lazy market
+                                lock/resolve off live token prices
+                                (ensureMarket, not exported), pari-mutuel
+                                settlement, weekly leaderboard + champion
+                                bonus rollover, and getGlobalFEthWeeklyOverview
+                                for the site-wide stats bar. Persists to
+                                Upstash Redis (UPSTASH_REDIS_REST_URL/TOKEN —
+                                see .env.example), falling back to a local
+                                JSON file when those aren't set — see §9
+                                "fETH" for the full design and its Vercel
+                                caveat.
+    walletEvents.ts                 Tiny client-only pub/sub
+                                (`WALLET_UPDATED_EVENT`/`notifyWalletUpdated`)
+                                so `ClaimChipsButton` and `PlayMarketCard` —
+                                two independent client components, each with
+                                their own `/api/wallet` fetch — stay in sync
+                                after a claim or a bet. See §9 "fETH" for the
+                                bug this fixes (bet buttons stuck behind "No
+                                fETH left" right after claiming).
 scripts/
   gen-registry.mjs             Regenerates src/lib/registry.{ts,json} from live APIs
   snapshot-premiums.mjs        Appends one premium snapshot line to
@@ -425,6 +511,15 @@ contracts/                     Separate npm package (Hardhat 3) — GapMarket
   hang categories off, and everything here is already USD, so those specific
   widgets wouldn't map to anything real; the parts that transplanted cleanly
   were the ones keyed to a single per-row metric, which premium already is.
+- **CoinGecko-style global stats bar** (`GlobalStatsBar`, mounted once in
+  root `layout.tsx`, under the header on every page): tokens tracked, average
+  premium, 24h volume, this week's fETH players + total staked, and a
+  leaderboard link — the same "ticker strip below the nav" CoinGecko shows
+  site-wide. Deliberately reads only `getPremiums()` (already ISR-cached,
+  cheap) and the fETH weekly overview (one Redis/JSON read) — explicitly
+  **not** the real-money Predict overview (`getPredictOverview()`), which
+  scans on-chain event logs and is only acceptable to call from `/predict`
+  itself, not from every single page load site-wide.
 - **Public API + embed widget** (`/api/premium`, `/api/premium/[ticker]`,
   `/embed/[ticker]`): deliberately open CORS (`Access-Control-Allow-Origin:
   *`) — this is the same `getPremiums()` data already shown on the dashboard,
@@ -495,6 +590,14 @@ contracts/                     Separate npm package (Hardhat 3) — GapMarket
   (`BetPlaced` only carries a block number). Cheap at zero-to-low bet
   volume; if that changes, batch or cache these instead of one `getBlock`
   call per unique block.
+- **fETH moved the entire chips/Play-money experience off-chain** to remove
+  the wallet-connect requirement that made free-to-play pointless for casual
+  visitors — internal cookie-based wallet, weekly claim, lazy market
+  lock/resolve, immediate pari-mutuel settlement, weekly champion bonus. The
+  on-chain `PlayMarket.sol` contract still exists and is still deployed but
+  is no longer read/written by the frontend. Full design, and the important
+  Vercel-serverless-persistence caveat for its JSON-file store, in §9 "fETH:
+  the off-chain internal wallet".
 
 ## 6. Commands
 
@@ -603,7 +706,33 @@ Done:
 - ~~PlayMarket: free weekly chips~~ — a second, parallel prediction-market
   contract with zero financial stakes (weekly-reset 0.1 chip allowance, own
   leaderboard, its own tab on every ticker's Predict page) alongside the
-  existing real-ETH GapMarket. See §9 "PlayMarket".
+  existing real-ETH GapMarket. See §9 "PlayMarket" (superseded by fETH below).
+- ~~fETH: off-chain internal wallet, no wallet-connect required~~ — moved the
+  chips tab entirely off-chain (rebranded "fETH"): cookie-based internal
+  wallet, weekly 0.1 fETH claim with anti-repeat-claim enforcement, lazy
+  market lock/resolve, and a weekly champion bonus for the top net winner.
+  See §9 "fETH: the off-chain internal wallet".
+- ~~How it works page~~ — `/how-it-works`, linked from the header nav and
+  homepage hero: premium tracker, real-ETH session + weekend-gap markets,
+  the fETH internal wallet, and the weekly prize draw.
+- ~~fETH discoverability fixes~~ — real usage testing (by the site's own
+  owner) found the whole Predict/fETH feature hard to find and, once found,
+  hard to actually use. Fixed: "Predict"/"Leaderboard" added back to header
+  nav (§9 "Nav flow"), `RealPlayTabs` now defaults to the fETH tab instead of
+  real-money, and a real bug where `ClaimChipsButton` and `PlayMarketCard`
+  each kept their own stale balance (claiming didn't update the bet card, so
+  bet buttons stayed hidden behind "No fETH left") was fixed via
+  `lib/walletEvents.ts`'s pub/sub. Also removed the "Embed this on your site"
+  snippet from the stock page (confusing, unwanted) — the underlying
+  `EmbedSnippet` component and `/embed/[ticker]` route are untouched, just no
+  longer surfaced there.
+- ~~fETH storage moved to Upstash Redis~~ — the local-JSON-file store
+  wouldn't survive a Vercel serverless deploy (planned soon); now backed by
+  Redis with a local-file fallback for zero-setup dev. See §9 "fETH" and
+  `.env.example`.
+- ~~CoinGecko-style global stats bar~~ — `GlobalStatsBar`, a thin strip under
+  the header on every page (tokens tracked, avg premium, 24h volume, this
+  week's fETH players/staked, leaderboard link). See §5.
 
 Not yet built, ordered by logical next priority:
 
@@ -620,9 +749,12 @@ Not yet built, ordered by logical next priority:
 3. **Telegram alerts** ("premium on TSLA crossed 3%") — needs a persistent
    worker/poller; the GitHub Actions cron (§3) could plausibly double as
    this instead of standing up a separate always-on process.
-4. **Deploy the site** — Vercel (straightforward, no env secrets needed yet
-   since everything hits public APIs) + register a domain. The repo itself
-   is already on GitHub (§10); this is specifically about hosting.
+4. **Deploy the site** — Vercel + register a domain. The repo itself is
+   already on GitHub (§10). **One real env-var dependency now**: the fETH
+   internal wallet needs `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN`
+   set (see `.env.example` and §9 "fETH") — without them it'll still build
+   and run, but fETH state won't persist across serverless invocations.
+   Everything else still hits public APIs with no secrets needed.
 5. See §9 "Open items specific to `/predict`" for prediction-market-specific
    items (mainnet decision, automating the oracle push + lock/resolve, a
    market-creation UI).
@@ -729,7 +861,17 @@ address that must be copied over by hand. Per-market feed addresses don't
 need frontend config at all — each market struct already stores its own
 `feed`, read directly off-chain.
 
-### PlayMarket: free weekly chips, no real money
+### PlayMarket: free weekly chips, no real money (superseded by fETH — see below)
+
+⚠️ **This subsection describes the original on-chain contract. As of the
+fETH rebuild, the frontend's fETH tab no longer reads or writes this
+contract at all** — see "fETH: the off-chain internal wallet" further down
+for what actually powers the site today. `PlayMarket.sol`,
+`contracts/scripts/create-play-markets.ts`, `lib/playBets.ts`, and the
+`PLAYMARKET_ABI` are all left in place (untouched, still deployed, still
+callable) in case the on-chain chips path is ever revived, but nothing in
+`src/app`/`src/components` calls into them anymore. Read the rest of this
+subsection as historical/contract-reference material, not as what's live.
 
 A second, parallel contract — not a mode flag on `GapMarket`. Added so people
 can play (and show up on a leaderboard) with zero financial stakes, whether
@@ -806,7 +948,117 @@ two-contract case (see `scripts/create-play-markets.ts`'s comment).
 its chip bets. Extending it to show both wasn't part of the original ask;
 do it by giving `getPlayWalletActivity()` (already in `playBets.ts`) the
 same treatment `getWalletActivity` gets today, plus a real/play toggle in the
-UI.
+UI. (This gap is now moot for fETH specifically, which was never on-chain —
+see below; it'd only matter if the on-chain PlayMarket path is revived.)
+
+### fETH: the off-chain internal wallet
+
+The fETH tab (renamed from "chips"/"Play money") was rebuilt to remove the
+one requirement that made the whole free-to-play mode pointless for casual
+visitors: **you needed a browser wallet extension just to claim and spend
+play money that was never worth anything.** fETH fixes that by moving the
+entire play-money side off-chain — no wallet, no gas, no signature, for
+either claiming or betting. This was an explicit, discussed trade-off: the
+alternative was a server-held relayer wallet paying gas for a browser-
+generated key, which would have meant a real private key with real testnet
+funds sitting on the server and a PlayMarket.sol rewrite to accept "bet on
+behalf of" calls — off-chain was chosen as strictly simpler and lower-risk
+for a feature that explicitly must never represent real value anyway.
+
+**Everything lives in `src/lib/offchainWallet.ts`:**
+
+- **Identity, not accounts.** First request to any fETH-touching route calls
+  `getOrCreateWalletId()`, which sets an **httpOnly** cookie
+  (`rham_wallet_id`, a `randomUUID()`, ~400-day `maxAge` — the browser cap).
+  httpOnly means client JS can't read or forge it, so clearing `localStorage`
+  alone can't mint a new identity — only actually clearing cookies (or an
+  incognito window) does. That's the accepted, best-effort anti-abuse level
+  for a play-money feature (a deliberate choice, not an oversight — a
+  fingerprint/IP-keyed server-side registry was the harder alternative
+  considered and set aside). `pseudoAddress()` derives a cosmetic
+  `0x`-looking address by SHA-256-hashing the wallet id, purely so the UI can
+  show something MetaMask-shaped; it is not a real key and can't sign
+  anything.
+- **Weekly claim** (`claimWeeklyFEth`) mirrors PlayMarket.sol's design
+  exactly: 0.1 fETH, **resets** (not adds) once per UTC week, keyed off the
+  same `Math.floor(now / WEEK_SECONDS)` boundary (Thursdays 00:00 UTC, an
+  artifact of the Unix epoch, not a deliberate day choice).
+- **Markets are lazy, not cron-driven.** `ensureMarket()` is called on every
+  read/bet; if a market's `locksAt`/`resolvesAt` has passed, it transitions
+  state right there using the ticker's *current* live DEX price (from the
+  same `getPremiums()` the dashboard uses) — the exact same "permissionless,
+  whoever-reads-it-first triggers it" pattern as GapMarket's
+  `lockMarket`/`resolveMarket`, just without a transaction. Once a market
+  resolves it immediately rolls into a fresh one so there's always something
+  open to bet on. Markets are simple recurring 1h-lock/1h-session windows for
+  every ticker in `PREDICTABLE_TICKERS` — **v1 does not model the on-chain
+  weekend-gap window off-chain**; the "How it works" page's weekend-gap
+  description refers to the real-ETH GapMarket, which does have it.
+- **Settlement is immediate, not a separate claim.** `settleMarket()` runs
+  the same pari-mutuel math as `claimableOf` (winner takes stake back + a
+  pro-rata cut of the losing pool; push/no-one-on-the-winning-side refunds
+  everyone) and credits every bettor's balance **directly**, in the same
+  store write that resolves the market. There's no on-chain gas cost to
+  avoid by deferring it, so there's no reason to make someone click "claim"
+  a second time.
+- **Weekly champion bonus** (`rolloverWeekIfNeeded`): the first store access
+  after a new UTC week begins computes last week's leaderboard, and if
+  anyone finished net-positive, stashes a bonus (`bonusNextClaim`) that gets
+  added on top of *that* wallet's next weekly claim. Purely symbolic — fETH
+  can't leave the site regardless — but gives the leaderboard a reason to
+  exist. Surfaced as a 🏆 banner on `/predict/leaderboard`'s fETH tab.
+- **Storage is Upstash Redis** (one JSON blob under the key
+  `rham:offchain-play:v1`), read/written through `@upstash/redis`'s REST
+  client, serialized through an in-process promise-chain write queue
+  (`withStore`) so concurrent requests *on the same instance* can't clobber
+  each other's read-modify-write. **Requires `UPSTASH_REDIS_REST_URL` +
+  `UPSTASH_REDIS_REST_TOKEN`** (see `.env.example`) — create a database at
+  console.upstash.com, or add the Upstash integration from the Vercel
+  Marketplace when setting up the Vercel project, and copy its REST URL +
+  token into env vars. **Without those two env vars set, `getRedis()` returns
+  `null` and the store transparently falls back to a local JSON file**
+  (`data/offchain-play.json`, gitignored) via `node:fs` — this is what makes
+  local dev (`npm run dev`) work with zero setup, but that file-backed path
+  does **not** persist across Vercel serverless invocations (ephemeral
+  filesystem, no disk shared between instances/regions) — **don't deploy
+  without the Redis env vars set**, or the leaderboard/pools/claims will
+  silently reset per-request in production. ⚠️ Known scaling gap even with
+  Redis: the write queue only prevents races within one server instance: two
+  different serverless instances writing at the exact same moment could
+  still race (lost update) since it's one whole-blob read-modify-write, not
+  atomic per-field ops. Acceptable at today's traffic for a play-money
+  feature; revisit (Redis hashes/`INCR`, or a Lua script) if concurrent bet
+  volume ever gets meaningfully high.
+- **API surface:** `GET/POST /api/wallet(/claim)` for the wallet itself,
+  `GET/POST /api/fplay/[ticker]` for market state + placing a bet,
+  `GET /api/fplay/leaderboard` for the weekly board + champion. All four
+  validate the ticker against `PREDICTABLE_TICKERS` (404 otherwise) so a
+  crafted request can't spin up junk markets for arbitrary tickers.
+- **Known gap:** `LeaderboardTable`'s wallet cell links to
+  `/predict/wallet/[address]` for real-money rows only (`linkWallets={false}`
+  for fETH) — a pseudo-address has no on-chain activity to look up, and
+  there's no off-chain equivalent of that page yet. Building one (grouping a
+  wallet id's own fETH history) is a natural follow-up, not done here.
+- **A hard-won gotcha of its own: two independent client components, one
+  balance.** `ClaimChipsButton` and `PlayMarketCard` each fetch and hold
+  their own copy of `/api/wallet`'s balance. The first version had no way for
+  one to learn the other had changed it — claiming fETH updated
+  `ClaimChipsButton`'s display, but `PlayMarketCard` kept showing its stale
+  (pre-claim) balance, which meant the bet buttons stayed hidden behind "No
+  fETH left — claim above" indefinitely (they only render once `balance >
+  0`). Real usage surfaced this as "I can't find where to place a bet" — the
+  buttons were never gone, just permanently hidden by stale state. Fixed with
+  a tiny client-only pub/sub (`lib/walletEvents.ts`'s `WALLET_UPDATED_EVENT`/
+  `notifyWalletUpdated`): both components dispatch it after any action that
+  changes the balance (claim, bet) and listen for it to refetch immediately,
+  on top of (not instead of) their existing periodic polls. Any future
+  component that reads/mutates the fETH balance should hook into this same
+  event rather than inventing another independent poll.
+- **`RealPlayTabs` defaults to the fETH tab, not real money** — same
+  root cause as above: real-money needs a wallet extension, the one thing a
+  first-time visitor is least likely to have, so defaulting to it hid the
+  wallet-free option behind an extra click people were missing. See §9 "Nav
+  flow".
 
 ### Pages & rendering
 
@@ -861,13 +1113,19 @@ prop — copy that one too if you add another server→client event-log path.
 
 ### Nav flow
 
-There is **no "Predict" link in the site header** (deliberately removed).
-The intended path is: browse the dashboard or a stock page → click
-"Predict →" on that stock's page (only shown for the 8 tickers in
-`PREDICTABLE_TICKERS`) → land on `/predict/[ticker]` already scoped to that
-stock. `/predict` (the index, listing all predictable tickers) still exists
-and is linked from the homepage's "02 · Bet on it" card, but isn't in global
-nav — it's a secondary entry point, not the primary one.
+**"Predict" and "Leaderboard" are in the site header nav** — this reverses
+an earlier deliberate decision to omit them (the reasoning was: browse a
+stock page → click "Predict →" there instead). Real usage testing showed
+that omission made the entire Predict/fETH feature hard to find at all,
+including for the site's own owner, so it was reversed. The stock-page
+"Predict →" button (only shown for the 8 tickers in `PREDICTABLE_TICKERS`)
+and the homepage's "02 · Bet on it" card are still there too — nav is just
+one more entry point, not a replacement for them.
+
+On `/predict/[ticker]` (and the leaderboard), `RealPlayTabs` now **defaults
+to the fETH tab, not real money** — real-money needs a wallet extension,
+which is the one thing a first-time visitor is least likely to have; fETH
+needs nothing, so it's the tab that should be immediately visible.
 
 ### Wallet & UI
 
@@ -943,6 +1201,7 @@ nav — it's a secondary entry point, not the primary one.
   uncommitted** (everything since the "Add shareable X cards and premium
   history snapshotting" commit — `git log`/`git status` are authoritative,
   this note will go stale). That includes `contracts/` itself, which isn't
-  tracked yet either. Worth committing in reviewable chunks rather than one
+  tracked yet either, and the subsequent fETH off-chain rewrite (§9) + the
+  `/how-it-works` page. Worth committing in reviewable chunks rather than one
   giant commit, given the size — check with the user first either way, per
   standing instructions to only commit when asked.

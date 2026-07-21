@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import WalletTrackerDrawer from "@/components/WalletTrackerDrawer";
+import GlobalStatsBar from "@/components/GlobalStatsBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,6 +46,24 @@ export default function RootLayout({
                 </span>
               </Link>
               <Link
+                href="/predict"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                Predict
+              </Link>
+              <Link
+                href="/predict/leaderboard"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                Leaderboard
+              </Link>
+              <Link
+                href="/how-it-works"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                How it works
+              </Link>
+              <Link
                 href="/heatmap"
                 className="text-sm text-text-secondary transition-colors hover:text-accent"
               >
@@ -63,6 +82,7 @@ export default function RootLayout({
             </div>
           </div>
         </header>
+        <GlobalStatsBar />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 lg:px-6">
           {children}
         </main>

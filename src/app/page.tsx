@@ -42,7 +42,10 @@ export default async function Home() {
           open. That leaves a live, constantly-moving gap between what a
           token trades at right now and its last official close — a signal
           that simply didn&apos;t exist before tokenized equities. RHAM is
-          built entirely around that gap, in two ways.
+          built entirely around that gap, in two ways.{" "}
+          <Link href="/how-it-works" className="text-accent hover:underline">
+            How it works →
+          </Link>
         </p>
       </section>
 
@@ -74,11 +77,12 @@ export default async function Home() {
           </h2>
           <p className="mt-2 text-sm text-text-secondary">
             Non-custodial markets, resolved entirely on-chain, no admin
-            deciding the outcome — bet with real ETH or{" "}
-            <strong className="text-text-primary">free weekly chips</strong>{" "}
-            (0.1, reset every week, its own leaderboard). Two kinds of market:{" "}
-            <strong className="text-text-primary">weekend gap</strong> — will
-            Friday&apos;s close open higher or lower on Monday — and{" "}
+            deciding the outcome — bet with real ETH, or with{" "}
+            <strong className="text-text-primary">free weekly fETH</strong>{" "}
+            (fake ETH) from an internal site wallet — no MetaMask needed (0.1
+            fETH, reset every week, its own leaderboard). Two kinds of
+            market: <strong className="text-text-primary">weekend gap</strong>{" "}
+            — will Friday&apos;s close open higher or lower on Monday — and{" "}
             <strong className="text-text-primary">trading session</strong> —
             up or down between the open and close of a single session.
           </p>

@@ -9,15 +9,24 @@ export interface LeaderboardRow {
   betCount: number;
 }
 
-/** Shared table shape for both the real-money and play-money leaderboards — pass `formatChips` for the play one so amounts don't read as real ETH. */
+/**
+ * Shared table shape for both the real-money and play-money leaderboards —
+ * pass `formatChips` for the play one so amounts don't read as real ETH.
+ * `linkWallets` disables the `/predict/wallet/[address]` link for fETH rows:
+ * those addresses are cosmetic pseudo-addresses derived from an internal
+ * wallet id (see lib/offchainWallet.ts), not real on-chain accounts, so a
+ * wallet-activity lookup there would just come back empty.
+ */
 export default function LeaderboardTable({
   entries,
   emptyText,
   formatAmount = formatEth,
+  linkWallets = true,
 }: {
   entries: LeaderboardRow[];
   emptyText: string;
   formatAmount?: (wei: bigint) => string;
+  linkWallets?: boolean;
 }) {
   if (entries.length === 0) {
     return (
@@ -45,9 +54,13 @@ export default function LeaderboardTable({
             <tr key={e.user} className="border-b border-border last:border-0 hover:bg-bg-hover">
               <td className="px-4 py-3 text-text-muted">{i + 1}</td>
               <td className="px-4 py-3">
-                <Link href={`/predict/wallet/${e.user}`} className="mono text-text-primary hover:text-accent">
-                  {truncateAddress(e.user)}
-                </Link>
+                {linkWallets ? (
+                  <Link href={`/predict/wallet/${e.user}`} className="mono text-text-primary hover:text-accent">
+                    {truncateAddress(e.user)}
+                  </Link>
+                ) : (
+                  <span className="mono text-text-primary">{truncateAddress(e.user)}</span>
+                )}
               </td>
               <td className="mono px-4 py-3 text-right text-text-secondary">{e.betCount}</td>
               <td className="mono px-4 py-3 text-right text-text-secondary">{formatAmount(e.stakedWei)}</td>

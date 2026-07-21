@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getBetsForMarket, type BetLog, type SerializableBet } from "@/lib/predictBets";
-import { getPlayBetsForMarket } from "@/lib/playBets";
 import { formatChips, formatEth, truncateAddress } from "@/lib/predictFormat";
 
 const EXPLORER = "https://explorer.testnet.chain.robinhood.com";
@@ -19,51 +18,96 @@ function fromSerializable(b: SerializableBet): BetLog {
   };
 }
 
+/** Plain-serializable shape of an off-chain fETH bet — see offchainWallet.ts's BetView. */
+export interface FPlayBetView {
+  address: string;
+  up: boolean;
+  amount: string;
+  at: number;
+}
+
+interface DisplayBet {
+  key: string;
+  user: string;
+  amount: bigint;
+  up: boolean;
+  href?: string;
+}
+
 /**
- * Live feed of who bet UP/DOWN on this market and how much — read straight
- * off BetPlaced events (no indexer). `initial` is server-fetched for the
- * first paint; a client poll picks up other users' bets afterward, since
- * there's no event subscription/subgraph yet (see CLAUDE.md §9 open items).
- * `mode` picks GapMarket ("real", the default) or PlayMarket ("play") — a
- * plain string, not a function reference, because this component is used
- * from a Server Component and functions can't cross that boundary as props
- * (unlike bigint, which just needs .toString()/BigInt(), a function prop
- * fails outright — see CLAUDE.md). The actual fetcher/formatter functions
- * are resolved right here, client-side, never passed in from the server.
+ * Live feed of who bet UP/DOWN on this market. `mode="real"` reads GapMarket's
+ * BetPlaced events straight off the RPC (no indexer), keyed by `marketId`.
+ * `mode="play"` polls the off-chain fETH API by `ticker` instead — there's no
+ * on-chain event to read since fETH bets never touch a contract, see
+ * lib/offchainWallet.ts. Both poll every 15s since neither has a push
+ * subscription yet.
  */
 export default function RecentBets({
   marketId,
+  ticker,
   initial,
+  initialFPlayBets,
   mode = "real",
 }: {
-  marketId: string;
-  initial: SerializableBet[];
+  marketId?: string;
+  ticker?: string;
+  initial?: SerializableBet[];
+  initialFPlayBets?: FPlayBetView[];
   mode?: "real" | "play";
 }) {
-  const fetchBets = mode === "play" ? getPlayBetsForMarket : getBetsForMarket;
-  const formatAmount = mode === "play" ? formatChips : formatEth;
-  const [bets, setBets] = useState<BetLog[]>(() => initial.map(fromSerializable));
+  const [realBets, setRealBets] = useState<BetLog[]>(() => (initial ?? []).map(fromSerializable));
+  const [playBets, setPlayBets] = useState<FPlayBetView[]>(initialFPlayBets ?? []);
 
   useEffect(() => {
+    if (mode !== "real" || !marketId) return;
     let cancelled = false;
     const id = BigInt(marketId);
-
     const poll = () => {
-      fetchBets(id)
+      getBetsForMarket(id)
         .then((fresh) => {
-          if (!cancelled) setBets(fresh);
+          if (!cancelled) setRealBets(fresh);
         })
         .catch(() => {});
     };
-
     const interval = setInterval(poll, POLL_SECONDS * 1000);
     return () => {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [marketId, fetchBets]);
+  }, [mode, marketId]);
 
-  if (bets.length === 0) {
+  useEffect(() => {
+    if (mode !== "play" || !ticker) return;
+    let cancelled = false;
+    const poll = () => {
+      fetch(`/api/fplay/${ticker}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (!cancelled) setPlayBets(data.bets ?? []);
+        })
+        .catch(() => {});
+    };
+    const interval = setInterval(poll, POLL_SECONDS * 1000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [mode, ticker]);
+
+  const displayBets: DisplayBet[] =
+    mode === "play"
+      ? playBets.map((b, i) => ({ key: `${b.address}-${b.at}-${i}`, user: b.address, amount: BigInt(b.amount), up: b.up }))
+      : realBets.map((b, i) => ({
+          key: `${b.txHash}-${i}`,
+          user: b.user,
+          amount: b.amount,
+          up: b.up,
+          href: `${EXPLORER}/tx/${b.txHash}`,
+        }));
+
+  const formatAmount = mode === "play" ? formatChips : formatEth;
+
+  if (displayBets.length === 0) {
     return (
       <div className="rounded-xl border border-border bg-bg-secondary p-4 text-center text-sm text-text-secondary">
         No bets on this market yet.
@@ -73,29 +117,38 @@ export default function RecentBets({
 
   return (
     <div className="rounded-xl border border-border bg-bg-secondary p-4">
-      <p className="mb-3 text-xs uppercase tracking-wide text-text-muted">
-        Recent bets ({bets.length})
-      </p>
+      <p className="mb-3 text-xs uppercase tracking-wide text-text-muted">Recent bets ({displayBets.length})</p>
       <div className="flex flex-col gap-2">
-        {bets.map((b, i) => (
-          <a
-            key={`${b.txHash}-${i}`}
-            href={`${EXPLORER}/tx/${b.txHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-bg-hover"
-          >
-            <span className="mono text-text-secondary">{truncateAddress(b.user)}</span>
-            <span className="mono text-text-primary">{formatAmount(b.amount)}</span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                b.up ? "bg-accent/15 text-accent" : "bg-danger/15 text-danger"
-              }`}
+        {displayBets.map((b) => {
+          const row = (
+            <>
+              <span className="mono text-text-secondary">{truncateAddress(b.user)}</span>
+              <span className="mono text-text-primary">{formatAmount(b.amount)}</span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                  b.up ? "bg-accent/15 text-accent" : "bg-danger/15 text-danger"
+                }`}
+              >
+                {b.up ? "UP" : "DOWN"}
+              </span>
+            </>
+          );
+          return b.href ? (
+            <a
+              key={b.key}
+              href={b.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-bg-hover"
             >
-              {b.up ? "UP" : "DOWN"}
-            </span>
-          </a>
-        ))}
+              {row}
+            </a>
+          ) : (
+            <div key={b.key} className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm">
+              {row}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
