@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import AutoRefresh from "@/components/AutoRefresh";
 import PremiumBadge from "@/components/PremiumBadge";
-import PremiumHistoryChart from "@/components/PremiumHistoryChart";
+import HistoryChartToggle from "@/components/HistoryChartToggle";
 import ShareButton from "@/components/ShareButton";
 import WatchButton from "@/components/WatchButton";
 import TickerIcon from "@/components/TickerIcon";
@@ -152,7 +152,7 @@ export default async function StockPage({
             />
           </div>
 
-          <PremiumHistoryChart points={history} />
+          <HistoryChartToggle points={history} />
           <SessionBreakdown stats={sessionStats} />
         </>
       ) : (

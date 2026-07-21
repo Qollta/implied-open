@@ -11,9 +11,11 @@ import RecentBets from "@/components/RecentBets";
 import RealPlayTabs from "@/components/RealPlayTabs";
 import PremiumHistoryChart from "@/components/PremiumHistoryChart";
 import ImpliedProbabilityChart from "@/components/ImpliedProbabilityChart";
+import CommentSection from "@/components/CommentSection";
 import { getAllMarkets, toInitialMarket } from "@/lib/predictMarkets";
 import { getBetsForMarket, getPoolHistory, toSerializableBet } from "@/lib/predictBets";
 import { getMarketView, getPoolHistoryView, peekWalletId } from "@/lib/offchainWallet";
+import { getComments } from "@/lib/comments";
 import { getPremiums } from "@/lib/premium";
 import { getPremiumHistory } from "@/lib/history";
 import { STOCK_BY_TICKER } from "@/lib/registry";
@@ -54,14 +56,16 @@ export default async function PredictTickerPage({
   const latestMarket = marketsForTicker[0];
   const walletId = await peekWalletId();
 
-  const [latestBets, poolHistory, fplayDetail, fplayPoolHistory, premiums, premiumHistory] = await Promise.all([
-    latestMarket ? getBetsForMarket(latestMarket.id).catch(() => []) : Promise.resolve([]),
-    latestMarket ? getPoolHistory(latestMarket.id).catch(() => []) : Promise.resolve([]),
-    isFEthTicker ? getMarketView(ticker, walletId).catch(() => null) : Promise.resolve(null),
-    isFEthTicker ? getPoolHistoryView(ticker).catch(() => []) : Promise.resolve([]),
-    getPremiums().catch(() => []),
-    stock ? getPremiumHistory(stock.ticker, 14) : Promise.resolve([]),
-  ]);
+  const [latestBets, poolHistory, fplayDetail, fplayPoolHistory, premiums, premiumHistory, comments] =
+    await Promise.all([
+      latestMarket ? getBetsForMarket(latestMarket.id).catch(() => []) : Promise.resolve([]),
+      latestMarket ? getPoolHistory(latestMarket.id).catch(() => []) : Promise.resolve([]),
+      isFEthTicker ? getMarketView(ticker, walletId).catch(() => null) : Promise.resolve(null),
+      isFEthTicker ? getPoolHistoryView(ticker).catch(() => []) : Promise.resolve([]),
+      getPremiums().catch(() => []),
+      stock ? getPremiumHistory(stock.ticker, 14) : Promise.resolve([]),
+      getComments(ticker).catch(() => []),
+    ]);
 
   const premiumRow = premiums.find((r) => r.stock.ticker === ticker);
 
@@ -163,6 +167,8 @@ export default async function PredictTickerPage({
       <PremiumHistoryChart points={premiumHistory} />
 
       <RealPlayTabs real={realSection} play={playSection} />
+
+      <CommentSection ticker={ticker} initial={comments} />
     </div>
   );
 }

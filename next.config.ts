@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     "/stock/*": ["./data/premium-history/**/*"],
     "/heatmap": ["./data/premium-history/**/*"],
     "/watchlist": ["./data/premium-history/**/*"],
+    "/compare": ["./data/premium-history/**/*"],
   },
 };
 

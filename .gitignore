@@ -42,6 +42,9 @@ yarn-error.log*
 # which is intentionally committed history from a cron)
 /data/offchain-play.json
 
+# local-file fallback for lib/comments.ts's Redis store — same reasoning as above
+/data/comments.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

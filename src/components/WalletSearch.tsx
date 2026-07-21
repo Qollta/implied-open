@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { isAddress } from "viem";
 
-export default function WalletSearch() {
+export default function WalletSearch({ basePath = "/predict/wallet" }: { basePath?: string }) {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
@@ -17,7 +17,7 @@ export default function WalletSearch() {
       return;
     }
     setError(false);
-    router.push(`/predict/wallet/${trimmed}`);
+    router.push(`${basePath}/${trimmed}`);
   };
 
   return (

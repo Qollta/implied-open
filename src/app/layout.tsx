@@ -75,6 +75,24 @@ export default function RootLayout({
               >
                 Watchlist
               </Link>
+              <Link
+                href="/portfolio"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                Portfolio
+              </Link>
+              <Link
+                href="/compare"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                Compare
+              </Link>
+              <Link
+                href="/developers"
+                className="text-sm text-text-secondary transition-colors hover:text-accent"
+              >
+                Developers
+              </Link>
             </div>
             <div className="flex items-center gap-3">
               <WalletTrackerDrawer />

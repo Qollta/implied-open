@@ -11,6 +11,7 @@ import type { StockPremium } from "@/lib/premium";
 import type { SparkPoint } from "@/lib/sparkline";
 import { formatCompactUsd, formatUsd } from "@/lib/format";
 import { PREDICTABLE_TICKERS } from "@/lib/predictContracts";
+import { getSector, type Sector } from "@/lib/sectors";
 
 type SortKey = "premium" | "volume" | "price";
 
@@ -22,8 +23,13 @@ export default function PremiumTable({
   sparklines?: Record<string, SparkPoint[]>;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("premium");
+  const [sector, setSector] = useState<Sector | "All">("All");
 
-  const sorted = [...rows].sort((a, b) => {
+  const presentSectors = [...new Set(rows.map((r) => getSector(r.stock.ticker)))];
+
+  const filtered = sector === "All" ? rows : rows.filter((r) => getSector(r.stock.ticker) === sector);
+
+  const sorted = [...filtered].sort((a, b) => {
     if (sortKey === "volume") return (b.volume24h ?? 0) - (a.volume24h ?? 0);
     if (sortKey === "price") return b.tokenPrice - a.tokenPrice;
     return Math.abs(b.premiumPct) - Math.abs(a.premiumPct);
@@ -42,7 +48,37 @@ export default function PremiumTable({
   );
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-bg-secondary">
+    <div className="flex flex-col gap-3">
+      {presentSectors.length > 1 && (
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => setSector("All")}
+            className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+              sector === "All"
+                ? "border-accent bg-accent/10 text-accent"
+                : "border-border text-text-secondary hover:border-accent hover:text-accent"
+            }`}
+          >
+            All
+          </button>
+          {presentSectors.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setSector(s)}
+              className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+                sector === s
+                  ? "border-accent bg-accent/10 text-accent"
+                  : "border-border text-text-secondary hover:border-accent hover:text-accent"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="overflow-x-auto rounded-xl border border-border bg-bg-secondary">
       <table className="w-full min-w-[640px] text-sm">
         <thead>
           <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-text-muted">
@@ -122,6 +158,7 @@ export default function PremiumTable({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
