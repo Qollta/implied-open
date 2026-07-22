@@ -31,7 +31,7 @@ export default async function Home() {
 
       <section className="flex flex-col gap-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-          RWAM — Real World Assets Market
+          RHAM — RobinHood Assets Market
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Where does the market think stocks open next?
@@ -41,7 +41,7 @@ export default async function Home() {
           but their &quot;official&quot; price only updates while NYSE is
           open. That leaves a live, constantly-moving gap between what a
           token trades at right now and its last official close — a signal
-          that simply didn&apos;t exist before tokenized equities. RWAM is
+          that simply didn&apos;t exist before tokenized equities. RHAM is
           built entirely around that gap, in two ways.{" "}
           <Link href="/how-it-works" className="text-accent hover:underline">
             How it works →

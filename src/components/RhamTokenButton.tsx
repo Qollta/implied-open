@@ -4,12 +4,12 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 
 /**
- * Header $RWAM badge. Currently a placeholder — no token exists yet (see
+ * Header $RHAM badge. Currently a placeholder — no token exists yet (see
  * CLAUDE.md roadmap), so clicking it just opens a small "coming soon" panel
  * instead of linking anywhere. Swap in the real contract address / launch
- * link once $RWAM actually exists.
+ * link once $RHAM actually exists.
  */
-export default function RwamTokenButton() {
+export default function RhamTokenButton() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -23,7 +23,7 @@ export default function RwamTokenButton() {
         }}
         className="shrink-0 whitespace-nowrap rounded-lg border border-accent/30 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
       >
-        $RWAM
+        $RHAM
       </button>
 
       {mounted &&
@@ -38,7 +38,7 @@ export default function RwamTokenButton() {
               className="w-full max-w-sm rounded-xl border border-border bg-bg-secondary p-5"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-text-primary">$RWAM</p>
+                <p className="text-sm font-semibold text-text-primary">$RHAM</p>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
@@ -49,7 +49,7 @@ export default function RwamTokenButton() {
                 </button>
               </div>
               <p className="mt-3 text-sm text-text-secondary">
-                $RWAM hasn&apos;t launched yet — no contract address, no
+                $RHAM hasn&apos;t launched yet — no contract address, no
                 trading link. This badge will turn into the real thing the
                 moment it does.
               </p>

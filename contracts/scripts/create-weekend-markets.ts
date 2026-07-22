@@ -1,6 +1,6 @@
 // Creates one "weekend gap" market per ticker: locks at this week's NYSE
 // close (Friday 16:00 ET) and resolves at the following Monday's open
-// (09:30 ET) — the other half of RWAM's concept, using the exact same
+// (09:30 ET) — the other half of RHAM's concept, using the exact same
 // GapMarket mechanic as the intraday session markets (create-markets.ts).
 // Only the two timestamps passed to createMarket differ.
 import "dotenv/config";

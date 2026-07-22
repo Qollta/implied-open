@@ -1,23 +1,22 @@
 @AGENTS.md
 
-# RWAM (Real World Assets Market on Robinhood Chain) — formerly "RHAM", formerly "Implied Open"
+# RHAM (RobinHood Assets Market) — briefly "RWAM", formerly "Implied Open"
 
-The site's brand is **RWAM** (header, page title, homepage) — renamed from
-"RHAM" (RobinHood Assets Market) to broaden the name beyond Robinhood
-specifically while keeping "on Robinhood Chain" as an explicit qualifier,
-since every data source/feed/ticker is still Robinhood-Chain-specific today.
-Full tagline: "RWAM — Real World Assets Market on Robinhood Chain". "Implied
+The site's brand is **RHAM** (header, page title, homepage) again — it was
+briefly renamed to "RWAM" (Real World Assets Market on Robinhood Chain) in
+the same session, then reverted back to "RHAM" per explicit direction. If
+you see "RWAM" anywhere (a stray comment, an old screenshot, a cached OG
+image), that's leftover from the brief rename — "RHAM" is current. "Implied
 Open" is kept as the name of the read-only premium-tracking feature
 specifically (§1) — think product name within the platform, not a separate
 site. The prediction market (§9) is the platform's other half, under
 "Predict". Package/directory names, most internal comments, and OG image
-copy still say "Implied Open" (and some still say "RHAM") in places — that's
-fine, not worth a mechanical rename; treat "RWAM" as the current source of
-truth for anything user-facing (header, `<title>`, homepage copy) and
-"Implied Open" as accurate everywhere else unless you're touching that code
-anyway.
+copy still say "Implied Open" in places — that's fine, not worth a
+mechanical rename; treat "RHAM" as the current source of truth for anything
+user-facing (header, `<title>`, homepage copy) and "Implied Open" as accurate
+everywhere else unless you're touching that code anyway.
 
-RWAM tracks *and* lets you bet on the live premium or discount between
+RHAM tracks *and* lets you bet on the live premium or discount between
 Robinhood's tokenized stocks (trading 24/7 on Robinhood Chain DEXes) and
 their official, market-hours-only closing price (Chainlink). This file is
 the single source of truth for a fresh Claude session — read it first, then
@@ -205,7 +204,10 @@ src/
                                 `WalletTrackerDrawer` trigger. `GlobalStatsBar`
                                 renders as its own strip directly under the
                                 header, on every page — §5 "CoinGecko-style
-                                global stats bar". No Twitter/$RWAM links yet
+                                global stats bar". Twitter/X link now live
+                                (`https://x.com/rwam_rh` — handle still says
+                                "rwam" from the brief RWAM rebrand, brand
+                                copy doesn't). No $RHAM token links yet
                                 (real URLs not decided — don't add
                                 placeholders)
   components/
@@ -693,11 +695,13 @@ Done:
 - ~~RHAM rebrand~~ — site brand is now **RHAM** (header, `<title>`,
   homepage). "Implied Open" is the premium-dashboard feature's name within
   the platform, not the site name anymore — see the top of this file.
-- ~~RWAM rebrand (from RHAM)~~ — site brand changed again, from "RHAM"
-  (RobinHood Assets Market) to **RWAM** (Real World Assets Market on
-  Robinhood Chain) — see the top of this file for why. Same scope as the
-  RHAM rebrand above: header, `<title>`, homepage copy, `/how-it-works`, the
-  embed widget's brand line, plus the shareable X banner/avatar artwork.
+- ~~RWAM rebrand (from RHAM), then reverted~~ — site brand briefly changed
+  to **RWAM** (Real World Assets Market on Robinhood Chain), same scope as
+  the RHAM rebrand above (header, `<title>`, homepage copy, `/how-it-works`,
+  embed widget, banner/avatar artwork) — then reverted back to **RHAM**
+  minutes later per explicit direction. Net effect: brand is RHAM, same as
+  before both rebrands; nothing to build here, just don't be confused if you
+  see "RWAM" in a stale screenshot or an old commit message.
 - ~~Premium heatmap~~ — `/heatmap`, ticker×day grid off the same snapshot
   files as the history chart. See §5.
 - ~~Predict leaderboard~~ — `/predict/leaderboard`, wallets ranked by ETH
@@ -743,12 +747,23 @@ Done:
 - ~~CoinGecko-style global stats bar~~ — `GlobalStatsBar`, a thin strip under
   the header on every page (tokens tracked, avg premium, 24h volume, this
   week's fETH players/staked, leaderboard link). See §5.
+- ~~Twitter/X header link~~ — `https://x.com/rwam_rh`, a plain hand-drawn X
+  logo icon button next to the wallet tracker. Handle still reads "rwam"
+  from the brief RWAM rebrand (see top of file) — brand copy reverted to
+  RHAM, the handle didn't (not something to silently "fix", that's a real
+  external account).
+- ~~$RHAM header badge~~ — `RhamTokenButton`, a clickable button next to the
+  Twitter link. Currently opens a small panel saying the token hasn't
+  launched yet (no contract address, no trading link) — see "Not yet built"
+  below for what replaces this once it's real.
 
 Not yet built, ordered by logical next priority:
 
-1. **Twitter/X and $RWAM header links** — explicitly asked for, but no real
-   URLs exist yet (no X account, no $RWAM page/token launched). Don't add
-   placeholder or guessed links — wire them in as soon as both exist.
+1. **$RHAM token going live** — the header badge (`RhamTokenButton`) is a
+   clickable placeholder today (opens a small panel saying the token hasn't
+   launched). A launch is reportedly in progress on "Pons" (a Robinhood
+   Chain launchpad) — once there's a real contract address/trading link,
+   update `RhamTokenButton`'s panel content, don't add one before it's real.
 2. **Gap-prediction accuracy stat** — now that history exists: "the premium
    correctly predicted the direction of the next open in X% of cases over
    the last N weekends." Needs a few weeks of real snapshots to be
@@ -1194,13 +1209,17 @@ needs nothing, so it's the tab that should be immediately visible.
   extending it to chips would take.
 - No real-yield mechanic yet connecting the leaderboards to anything —
   discussed as a future idea (top real-money leaderboard performers earning
-  a share of eventual $RWAM trading fees) but blocked on $RWAM not existing
+  a share of eventual $RHAM trading fees) but blocked on $RHAM not existing
   and on the mainnet decision above; nothing to build here until both are
   real.
 
 ## 10. Repository & collaboration
 
-- **Remote:** `https://github.com/Qollta/implied-open` (private).
+- **Remote:** `https://github.com/Qollta/implied-open` — **public** (flipped
+  from private; Vercel Hobby blocks deploys from any commit author who isn't
+  the project owner on a private repo — going public was the free fix, see
+  §9's deployment note if this file has one, otherwise just know this is why
+  a second contributor's pushes deploy fine now).
 - No longer solo — a second contributor pushes to `master` too (seen in
   deploy history as `AxiomerS`), same two-person-repo shape as RH Explorer.
   `git log`/`git status` are authoritative for current state.

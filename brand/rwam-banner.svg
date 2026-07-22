@@ -67,8 +67,8 @@
   <!-- wordmark block -->
   <g font-family="-apple-system,'Segoe UI',ui-sans-serif,system-ui,sans-serif">
     <text x="97" y="176" font-size="19" font-weight="700" letter-spacing="3.5" fill="#00c805">IMPLIED OPEN &#183; PREDICT</text>
-    <text x="93" y="288" font-size="126" font-weight="800" fill="#00c805" letter-spacing="-2">RWAM</text>
-    <text x="98" y="329" font-size="26" font-weight="500" fill="#9aa7b4">Real World Assets Market on Robinhood Chain</text>
+    <text x="93" y="288" font-size="126" font-weight="800" fill="#00c805" letter-spacing="-2">RHAM</text>
+    <text x="98" y="332" font-size="33" font-weight="500" fill="#9aa7b4">RobinHood Assets Market</text>
     <text x="98" y="368" font-size="20" fill="#64707d">Live premium tracker &#183; Non-custodial Predict markets</text>
   </g>
 
