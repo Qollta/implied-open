@@ -31,7 +31,7 @@ export default async function Home() {
 
       <section className="flex flex-col gap-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-          RWAM — Real World Assets Market on Robinhood Chain
+          RWAM — Real World Assets Market
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Where does the market think stocks open next?

@@ -28,7 +28,7 @@ export default async function GlobalStatsBar() {
     <div className="border-b border-border bg-bg-primary/60">
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-5 gap-y-1 overflow-x-auto px-4 py-1.5 text-xs text-text-secondary lg:px-6">
         <span className="whitespace-nowrap">
-          🪙 <strong className="text-text-primary">{rows.length}</strong> tokens tracked
+          <strong className="text-text-primary">{rows.length}</strong> tokens tracked
         </span>
         <span className="whitespace-nowrap">
           📈 Avg premium{" "}

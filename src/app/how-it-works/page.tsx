@@ -6,6 +6,55 @@ export const metadata = {
     "How RWAM's premium tracker and Predict markets work — real-ETH UP/DOWN bets, weekend-gap predictions, and the fETH internal wallet with its weekly prize draw.",
 };
 
+/** Hand-built SVG diagram of the weekend gap — the core concept behind §01/§02 below: the official close freezes Friday 4pm while the token keeps trading through the weekend, and the premium is the vertical distance between the two by Monday open. */
+function WeekendGapDiagram() {
+  return (
+    <div className="rounded-xl border border-border bg-bg-secondary p-4">
+      <svg viewBox="0 0 800 220" className="w-full" xmlns="http://www.w3.org/2000/svg">
+        <line x1="60" y1="170" x2="740" y2="170" stroke="var(--border)" strokeWidth="1" />
+
+        <line
+          x1="120"
+          y1="112"
+          x2="680"
+          y2="112"
+          stroke="var(--text-muted)"
+          strokeWidth="2"
+          strokeDasharray="6 7"
+        />
+        <circle cx="120" cy="112" r="5" fill="var(--text-secondary)" />
+
+        <path
+          d="M120,112 C220,100 260,140 320,120 S420,70 480,90 S600,50 680,58"
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <circle cx="680" cy="58" r="5" fill="var(--accent)" />
+
+        <line x1="680" y1="58" x2="680" y2="112" stroke="var(--accent)" strokeWidth="1.5" strokeDasharray="3 4" />
+        <text x="694" y="89" fontSize="13" fill="var(--accent)" fontWeight="600">
+          premium
+        </text>
+
+        <line x1="120" y1="178" x2="120" y2="184" stroke="var(--border)" />
+        <line x1="680" y1="178" x2="680" y2="184" stroke="var(--border)" />
+
+        <text x="120" y="204" fontSize="12" fill="var(--text-secondary)" textAnchor="middle">
+          Fri 4:00pm — official close (frozen)
+        </text>
+        <text x="400" y="204" fontSize="12" fill="var(--text-muted)" textAnchor="middle">
+          weekend — token keeps trading
+        </text>
+        <text x="680" y="204" fontSize="12" fill="var(--text-secondary)" textAnchor="middle">
+          Mon 9:30am — market reopens
+        </text>
+      </svg>
+    </div>
+  );
+}
+
 function Section({
   step,
   title,
@@ -40,6 +89,8 @@ export default function HowItWorksPage() {
           investment advice.
         </p>
       </div>
+
+      <WeekendGapDiagram />
 
       <Section step="01 · Watch it" title="The premium — Implied Open">
         <p>
