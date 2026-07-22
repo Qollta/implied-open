@@ -40,7 +40,7 @@ function cardHtml(
   row: Awaited<ReturnType<typeof getPremiums>>[number] | undefined,
 ): string {
   const pct = row ? row.premiumPct : null;
-  const color = pct == null ? "#9aa7b4" : pct >= 0 ? "#00c805" : "#ff5252";
+  const color = pct == null ? "#6e6e73" : pct >= 0 ? "#0071e3" : "#d70015";
   const pctText = pct == null ? "No data" : formatPct(pct);
   const priceLine = row
     ? `${escapeHtml(formatUsd(row.tokenPrice))} vs official ${escapeHtml(formatUsd(row.official))}`
@@ -55,17 +55,17 @@ function cardHtml(
   a { text-decoration: none; }
   .card {
     display: flex; flex-direction: column; gap: 8px;
-    width: 280px; padding: 14px 16px; border-radius: 12px;
-    background: #0d150f; border: 1px solid #1e3022; color: #eef2f6;
+    width: 280px; padding: 14px 16px; border-radius: 22px;
+    background: #ffffff; border: 1px solid #e5e5ea; color: #1d1d1f;
   }
   .row { display: flex; align-items: center; gap: 8px; }
-  .icon { width: 24px; height: 24px; border-radius: 999px; background: #17241a; }
+  .icon { width: 24px; height: 24px; border-radius: 999px; background: #f5f5f7; }
   .ticker { font-weight: 700; font-size: 14px; }
-  .name { font-size: 11px; color: #64707d; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .name { font-size: 11px; color: #86868b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pct { font-family: ui-monospace, monospace; font-size: 26px; font-weight: 700; color: ${color}; }
-  .price { font-family: ui-monospace, monospace; font-size: 11px; color: #9aa7b4; }
-  .brand { font-size: 10px; color: #64707d; }
-  .brand b { color: #00c805; }
+  .price { font-family: ui-monospace, monospace; font-size: 11px; color: #6e6e73; }
+  .brand { font-size: 10px; color: #86868b; }
+  .brand b { color: #0071e3; }
 </style></head>
 <body>
   <a class="card" href="${SITE_URL}/stock/${stock.ticker}" target="_blank" rel="noopener noreferrer">
@@ -84,5 +84,5 @@ function cardHtml(
 }
 
 function notFoundHtml(ticker: string): string {
-  return `<!doctype html><html><body style="margin:0;padding:14px;font-family:system-ui,sans-serif;background:#0d150f;color:#9aa7b4;font-size:12px;border:1px solid #1e3022;border-radius:12px;">Unknown ticker: ${escapeHtml(ticker)}</body></html>`;
+  return `<!doctype html><html><body style="margin:0;padding:14px;font-family:system-ui,sans-serif;background:#ffffff;color:#6e6e73;font-size:12px;border:1px solid #e5e5ea;border-radius:22px;">Unknown ticker: ${escapeHtml(ticker)}</body></html>`;
 }

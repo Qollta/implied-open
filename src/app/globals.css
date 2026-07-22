@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #060a07;
-  --bg-secondary: #0d150f;
-  --bg-hover: #17241a;
-  --border: #1e3022;
-  --text-primary: #eef2f6;
-  --text-secondary: #9aa7b4;
-  --text-muted: #64707d;
-  --accent: #00c805;
-  --accent-hover: #33d635;
-  --danger: #ff5252;
-  --warning: #ffb648;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f7;
+  --bg-hover: #ececef;
+  --border: #e5e5ea;
+  --text-primary: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-muted: #86868b;
+  --accent: #0071e3;
+  --accent-hover: #2997ff;
+  --danger: #d70015;
+  --warning: #ff9500;
+  --glass: rgba(255, 255, 255, 0.72);
 }
 
 @theme inline {
@@ -26,21 +27,33 @@
   --color-accent-hover: var(--accent-hover);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jbmono);
+
+  /* Apple/PonsDrop-style rounding — bumped up from Tailwind's defaults so
+     every existing rounded-md/lg/xl/2xl usage across the app gets softer,
+     without having to touch each component individually. */
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.375rem;
+  --radius-2xl: 1.75rem;
+  --radius-3xl: 2rem;
 }
 
 body {
-  background:
-    radial-gradient(ellipse 90% 40% at 50% -10%, rgba(0, 200, 5, 0.10), transparent),
-    radial-gradient(ellipse 60% 30% at 100% 0%, rgba(0, 200, 5, 0.05), transparent),
-    var(--bg-primary);
-  background-attachment: fixed;
+  background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 .mono {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-family: var(--font-jbmono), ui-monospace, "SF Mono", "Cascadia Code", monospace;
   font-variant-numeric: tabular-nums;
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }

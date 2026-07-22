@@ -29,7 +29,7 @@ export default function ConnectWallet() {
         <button
           type="button"
           disabled
-          className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black opacity-50"
+          className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white opacity-50"
         >
           No wallet found
         </button>
@@ -42,7 +42,7 @@ export default function ConnectWallet() {
           type="button"
           onClick={() => connect({ connector: options[0] })}
           disabled={isPending}
-          className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-colors hover:bg-accent-hover disabled:opacity-50"
+          className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
           {isPending ? "Connecting…" : "Connect Wallet"}
         </button>
@@ -55,7 +55,7 @@ export default function ConnectWallet() {
           type="button"
           onClick={() => setPickerOpen((v) => !v)}
           disabled={isPending}
-          className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-colors hover:bg-accent-hover disabled:opacity-50"
+          className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
           {isPending ? "Connecting…" : "Connect Wallet"}
         </button>

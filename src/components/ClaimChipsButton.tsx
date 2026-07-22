@@ -103,7 +103,7 @@ export default function ClaimChipsButton() {
             type="button"
             disabled={busy}
             onClick={claim}
-            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-colors hover:bg-accent-hover disabled:opacity-50"
+            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
           >
             {busy ? "Claiming…" : `Claim ${hasBonus ? formatChips(BigInt(wallet.pendingBonus) + WEEKLY_FETH) : "0.1 fETH"}`}
           </button>

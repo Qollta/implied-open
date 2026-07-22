@@ -89,7 +89,7 @@ export default async function StockPage({
           {(PREDICTABLE_TICKERS as readonly string[]).includes(stock.ticker) && (
             <Link
               href={`/predict/${stock.ticker}`}
-              className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-colors hover:bg-accent-hover"
+              className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
             >
               Predict →
             </Link>

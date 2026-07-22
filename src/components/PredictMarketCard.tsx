@@ -232,7 +232,7 @@ export default function PredictMarketCard({
             type="button"
             disabled={busy}
             onClick={() => bet(true)}
-            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             Bet UP
           </button>
@@ -289,7 +289,7 @@ export default function PredictMarketCard({
             onClick={() =>
               writeContract({ address: GAP_MARKET_ADDRESS, abi: GAPMARKET_ABI, functionName: "claim", args: [id] })
             }
-            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-colors hover:bg-accent-hover disabled:opacity-50"
+            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
           >
             {claimable ? `Claim ${formatEth(claimable)}` : "Nothing to claim"}
           </button>

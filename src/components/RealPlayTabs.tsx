@@ -21,7 +21,7 @@ export default function RealPlayTabs({ real, play }: { real: ReactNode; play: Re
           type="button"
           onClick={() => setTab("real")}
           className={`rounded-md px-3 py-1.5 transition-colors ${
-            tab === "real" ? "bg-accent text-black" : "text-text-secondary hover:text-text-primary"
+            tab === "real" ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
           }`}
         >
           💰 Real money
@@ -30,7 +30,7 @@ export default function RealPlayTabs({ real, play }: { real: ReactNode; play: Re
           type="button"
           onClick={() => setTab("play")}
           className={`rounded-md px-3 py-1.5 transition-colors ${
-            tab === "play" ? "bg-accent text-black" : "text-text-secondary hover:text-text-primary"
+            tab === "play" ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
           }`}
         >
           🎮 fETH

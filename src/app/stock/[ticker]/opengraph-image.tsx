@@ -12,13 +12,13 @@ export const contentType = "image/png";
 // (unlike the page, which caches via its own `revalidate` export).
 export const revalidate = 30;
 
-const BG = "#0b0e11";
-const BORDER = "#232b35";
-const TEXT_PRIMARY = "#eef2f6";
-const TEXT_SECONDARY = "#9aa7b4";
-const TEXT_MUTED = "#64707d";
-const ACCENT = "#00c805";
-const DANGER = "#ff5252";
+const BG = "#ffffff";
+const BORDER = "#e5e5ea";
+const TEXT_PRIMARY = "#1d1d1f";
+const TEXT_SECONDARY = "#6e6e73";
+const TEXT_MUTED = "#86868b";
+const ACCENT = "#0071e3";
+const DANGER = "#d70015";
 
 export default async function Image({
   params,

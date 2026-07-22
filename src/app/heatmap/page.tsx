@@ -21,7 +21,7 @@ export default async function HeatmapPage() {
         <p className="max-w-2xl text-sm text-text-secondary">
           One cell per stock per day: the average premium (or discount) the
           onchain crowd priced in that day, from the same 15-minute snapshots
-          behind each stock&apos;s history chart. Green = trading above the
+          behind each stock&apos;s history chart. Blue = trading above the
           official close, red = below. A ticker that&apos;s consistently one
           color has a persistent gap, not just noise.
         </p>

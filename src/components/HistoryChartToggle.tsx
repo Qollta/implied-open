@@ -26,7 +26,7 @@ export default function HistoryChartToggle({ points }: { points: HistoryPoint[] 
             type="button"
             onClick={() => setMode("line")}
             className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
-              mode === "line" ? "bg-accent text-black" : "text-text-secondary hover:text-text-primary"
+              mode === "line" ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
             }`}
           >
             Line
@@ -35,7 +35,7 @@ export default function HistoryChartToggle({ points }: { points: HistoryPoint[] 
             type="button"
             onClick={() => setMode("candles")}
             className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
-              mode === "candles" ? "bg-accent text-black" : "text-text-secondary hover:text-text-primary"
+              mode === "candles" ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
             }`}
           >
             Candles

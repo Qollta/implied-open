@@ -59,7 +59,7 @@ export default function CommentSection({ ticker, initial }: { ticker: string; in
           <button
             type="submit"
             disabled={posting || !text.trim()}
-            className="shrink-0 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-accent-hover disabled:opacity-50"
+            className="shrink-0 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
           >
             {posting ? "Posting…" : "Post"}
           </button>

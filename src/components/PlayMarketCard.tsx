@@ -229,7 +229,7 @@ export default function PlayMarketCard({ ticker, initial }: { ticker: string; in
             type="button"
             disabled={busy}
             onClick={() => bet(true)}
-            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             Bet UP
           </button>

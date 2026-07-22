@@ -16,7 +16,7 @@ type SortMode = "premium" | "alpha";
 
 function cellColor(pct: number): string {
   const intensity = Math.min(1, Math.abs(pct) / SATURATION_CAP);
-  const rgb = pct >= 0 ? "0, 200, 5" : "255, 82, 82"; // --accent / --danger
+  const rgb = pct >= 0 ? "0, 113, 227" : "215, 0, 21"; // --accent / --danger
   return `rgba(${rgb}, ${0.1 + intensity * 0.75})`;
 }
 
@@ -140,7 +140,7 @@ export default function PremiumHeatmap({
           <div
             className="h-2 w-32 rounded-full"
             style={{
-              background: `linear-gradient(to right, rgba(255,82,82,0.85), rgba(255,82,82,0.1), var(--bg-hover), rgba(0,200,5,0.1), rgba(0,200,5,0.85))`,
+              background: `linear-gradient(to right, rgba(215,0,21,0.85), rgba(215,0,21,0.1), var(--bg-hover), rgba(0,113,227,0.1), rgba(0,113,227,0.85))`,
             }}
           />
           <span className="text-xs text-text-muted">+{SATURATION_CAP}%</span>
@@ -152,7 +152,7 @@ export default function PremiumHeatmap({
               type="button"
               onClick={() => setSortMode(mode)}
               className={`rounded-md px-2.5 py-1 transition-colors ${
-                sortMode === mode ? "bg-accent text-black" : "text-text-secondary hover:text-text-primary"
+                sortMode === mode ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
               }`}
             >
               {mode === "premium" ? "Sort: biggest gap" : "Sort: A–Z"}
