@@ -36,7 +36,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <header className="glass sticky top-0 z-30 border-b border-border">
-          <div className="mx-auto flex w-full max-w-6xl flex-nowrap items-center justify-between gap-4 overflow-x-auto px-4 py-3 lg:px-6">
+          <div className="no-scrollbar mx-auto flex w-full max-w-6xl flex-nowrap items-center justify-between gap-4 overflow-x-auto px-4 py-3 lg:px-6">
             <Link href="/" className="flex shrink-0 items-baseline gap-2">
               <span className="whitespace-nowrap text-lg font-bold tracking-tight text-text-primary">
                 RHAM
