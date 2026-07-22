@@ -94,7 +94,17 @@ export default function RootLayout({
             </div>
             <div className="flex shrink-0 flex-nowrap items-center gap-2">
               <WalletTrackerDrawer />
-              {/* Twitter/X link goes here once the account exists. */}
+              <a
+                href="https://x.com/rwam_rh"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="RWAM on X"
+                className="flex shrink-0 items-center justify-center rounded-lg border border-border p-2 text-text-secondary transition-colors hover:border-accent hover:text-accent"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M18.9 2H22l-7.5 8.6L23 22h-6.9l-5.4-6.6L4.4 22H1.3l8-9.2L1 2h7.1l4.9 6.1L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z" />
+                </svg>
+              </a>
               <RwamTokenButton />
             </div>
           </div>
