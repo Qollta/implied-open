@@ -96,7 +96,13 @@ export default function RootLayout({
             </div>
             <div className="flex items-center gap-3">
               <WalletTrackerDrawer />
-              {/* Twitter/X and $RWAM links go here once they exist. */}
+              {/* Twitter/X link goes here once the account exists. */}
+              <span
+                title="$RWAM — coming soon"
+                className="rounded-lg border border-accent/30 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent"
+              >
+                $RWAM
+              </span>
             </div>
           </div>
         </header>
