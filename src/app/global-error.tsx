@@ -20,7 +20,7 @@ export default function GlobalError({
         <p className="text-sm font-semibold uppercase tracking-wide text-danger">
           Something went wrong
         </p>
-        <h1 className="text-2xl font-bold tracking-tight">RHAV couldn&apos;t load</h1>
+        <h1 className="text-2xl font-bold tracking-tight">SAV couldn&apos;t load</h1>
         <p className="max-w-md text-sm text-text-secondary">
           Usually a hiccup talking to the chain or the public Blockscout API
           — it clears up on its own most of the time.
