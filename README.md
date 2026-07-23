@@ -53,17 +53,6 @@ RHAM is two things bolted together on purpose, at two different maturity levels:
 
 Everything except `/predict` is **read-only** — no accounts, no database, no wallet required.
 
-## Tech stack
-
-| | |
-|---|---|
-| Framework | [Next.js 16](https://nextjs.org) (App Router, Turbopack) + React 19 + TypeScript |
-| Styling | Tailwind CSS v4 (no component libraries — hand-built SVG charts) |
-| On-chain data | [Chainlink](https://chain.link) price feeds on Robinhood Chain (official close), [Blockscout](https://www.blockscout.com/) (live DEX price) |
-| Prediction markets | [Solidity](https://soliditylang.org) contracts (Hardhat 3) + [wagmi](https://wagmi.sh) / [viem](https://viem.sh) |
-| Off-chain storage | [Upstash Redis](https://upstash.com) for the free-play fETH wallet |
-| History | GitHub Actions cron, snapshotting premiums straight into committed JSONL files — no database |
-| Hosting | [Vercel](https://vercel.com) |
 
 ## Running it locally
 
@@ -76,7 +65,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The premium tracker works immediately with zero configuration — it talks to the same public Chainlink/Blockscout endpoints as production.
+
 
 To use the fETH free-play wallet with persistence across restarts, copy `.env.example` to `.env.local` and fill in an [Upstash Redis](https://console.upstash.com) REST URL + token. Without it, fETH state falls back to a local JSON file (fine for local dev only).
 
