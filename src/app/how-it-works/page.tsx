@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "How it works — RHAM",
+  title: "How it works — RHAV",
   description:
-    "How RHAM's premium tracker and Predict markets work — real-ETH UP/DOWN bets, weekend-gap predictions, and the fETH internal wallet with its weekly prize draw.",
+    "How RHAV's premium tracker and Predict markets work — real-ETH UP/DOWN bets, weekend-gap predictions, and the fETH internal wallet with its weekly prize draw.",
 };
 
 /** Hand-built SVG diagram of the weekend gap — the core concept behind §01/§02 below: the official close freezes Friday 4pm while the token keeps trading through the weekend, and the premium is the vertical distance between the two by Monday open. */
@@ -77,9 +77,9 @@ export default function HowItWorksPage() {
   return (
     <div className="flex max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold tracking-tight">How RHAM works</h1>
+        <h1 className="text-2xl font-bold tracking-tight">How RHAV works</h1>
         <p className="text-sm text-text-secondary">
-          RHAM has two halves: a live dashboard that tracks the premium
+          RHAV has two halves: a live dashboard that tracks the premium
           between Robinhood&apos;s tokenized stocks and their real closing
           price (<Link href="/" className="text-accent hover:underline">Implied Open</Link>), and{" "}
           <Link href="/predict" className="text-accent hover:underline">Predict</Link>,
@@ -110,7 +110,7 @@ export default function HowItWorksPage() {
           put ETH on <strong className="text-accent">UP</strong> or{" "}
           <strong className="text-danger">DOWN</strong> before the market
           locks. Winners split the losing side&apos;s pool pro-rata to their
-          stake — nobody, including RHAM, decides the outcome. The contract
+          stake — nobody, including RHAV, decides the outcome. The contract
           reads the same price feed everyone can see, at the moment anyone
           calls lock/resolve.
         </p>
@@ -141,7 +141,7 @@ export default function HowItWorksPage() {
           <strong className="text-text-primary">fETH</strong> (fake ETH) lets
           anyone play the same UP/DOWN markets with zero setup —{" "}
           <strong className="text-text-primary">no wallet extension, no gas, no signup.</strong>{" "}
-          The first time you open a ticker&apos;s Predict page, RHAM quietly
+          The first time you open a ticker&apos;s Predict page, RHAV quietly
           assigns you an internal wallet (a cosmetic address, shown at the top
           of the fETH tab) and remembers it for you.
         </p>
@@ -155,7 +155,7 @@ export default function HowItWorksPage() {
           league resetting each week.
         </p>
         <p>
-          Because fETH never touches a wallet, RHAM enforces &quot;once a
+          Because fETH never touches a wallet, RHAV enforces &quot;once a
           week&quot; with a stored identifier tied to your browser instead of a signed
           transaction — good enough to stop casual re-claims, though clearing
           cookies or switching browsers resets it. fETH itself can never leave

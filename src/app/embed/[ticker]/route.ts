@@ -78,7 +78,7 @@ function cardHtml(
     </div>
     <div class="pct">${pctText}</div>
     <div class="price">${priceLine}</div>
-    <div class="brand">via <b>RHAM</b> — Implied Open</div>
+    <div class="brand">via <b>RHAV</b> — Implied Open</div>
   </a>
 </body></html>`;
 }

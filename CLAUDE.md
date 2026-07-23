@@ -1,20 +1,22 @@
 @AGENTS.md
 
-# RHAM (RobinHood Assets Market) — briefly "RWAM", formerly "Implied Open"
+# RHAV (RobinHood Assets Vault) — formerly "RHAM", briefly "RWAM" before that, formerly "Implied Open"
 
-The site's brand is **RHAM** (header, page title, homepage) again — it was
-briefly renamed to "RWAM" (Real World Assets Market on Robinhood Chain) in
-the same session, then reverted back to "RHAM" per explicit direction. If
-you see "RWAM" anywhere (a stray comment, an old screenshot, a cached OG
-image), that's leftover from the brief rename — "RHAM" is current. "Implied
-Open" is kept as the name of the read-only premium-tracking feature
+The site's brand is **RHAV** (header, page title, homepage) — renamed from
+"RHAM" (RobinHood Assets Market) per explicit direction. Before that it was
+briefly "RWAM" (Real World Assets Market on Robinhood Chain), then reverted
+to "RHAM", then renamed again to "RHAV". If you see "RHAM" or "RWAM" anywhere
+(a stray comment, an old screenshot, a cached OG image, `brand/rwam-*.svg`'s
+filenames), that's leftover from an earlier name — "RHAV" is current.
+"Implied Open" is kept as the name of the read-only premium-tracking feature
 specifically (§1) — think product name within the platform, not a separate
 site. The prediction market (§9) is the platform's other half, under
-"Predict". Package/directory names, most internal comments, and OG image
-copy still say "Implied Open" in places — that's fine, not worth a
-mechanical rename; treat "RHAM" as the current source of truth for anything
-user-facing (header, `<title>`, homepage copy) and "Implied Open" as accurate
-everywhere else unless you're touching that code anyway.
+"Predict". Package/directory names (`implied-open`), most internal comments,
+component names (`RhamTokenButton`), and OG image copy still say "RHAM" or
+"Implied Open" in places — that's fine, not worth a mechanical rename; treat
+"RHAV" as the current source of truth for anything user-facing (header,
+`<title>`, homepage copy) and the older names as accurate everywhere else
+unless you're touching that code anyway.
 
 RHAM tracks *and* lets you bet on the live premium or discount between
 Robinhood's tokenized stocks (trading 24/7 on Robinhood Chain DEXes) and

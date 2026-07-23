@@ -18,9 +18,9 @@ const jbMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3100"),
-  title: "RHAM — RobinHood Assets Market",
+  title: "RHAV — RobinHood Assets Vault",
   description:
-    "RHAM tracks and lets you bet on real-world stocks tokenized on Robinhood Chain — the live premium while markets are closed, and non-custodial prediction markets on whether a stock opens higher or lower, both across the weekend and during the trading session.",
+    "RHAV tracks and lets you bet on real-world stocks tokenized on Robinhood Chain — the live premium while markets are closed, and non-custodial prediction markets on whether a stock opens higher or lower, both across the weekend and during the trading session.",
   twitter: { card: "summary_large_image" },
 };
 
@@ -39,7 +39,7 @@ export default function RootLayout({
           <div className="no-scrollbar mx-auto flex w-full max-w-6xl flex-nowrap items-center justify-between gap-4 overflow-x-auto px-4 py-3 lg:px-6">
             <Link href="/" className="flex shrink-0 items-baseline gap-2">
               <span className="whitespace-nowrap text-lg font-bold tracking-tight text-text-primary">
-                RHAM
+                RHAV
               </span>
             </Link>
             <nav className="flex shrink-0 gap-0.5 rounded-full bg-bg-hover p-1 text-sm">
@@ -98,7 +98,7 @@ export default function RootLayout({
                 href="https://x.com/rha_market"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="RHAM on X"
+                aria-label="RHAV on X"
                 className="flex shrink-0 items-center justify-center rounded-full bg-bg-hover p-2 text-text-secondary transition-colors hover:bg-bg-primary hover:text-text-primary"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

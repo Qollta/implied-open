@@ -31,7 +31,7 @@ export default async function Home() {
 
       <section className="flex flex-col gap-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-          RHAM — RobinHood Assets Market
+          RHAV — RobinHood Assets Vault
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Where does the market think stocks open next?
@@ -41,7 +41,7 @@ export default async function Home() {
           but their &quot;official&quot; price only updates while NYSE is
           open. That leaves a live, constantly-moving gap between what a
           token trades at right now and its last official close — a signal
-          that simply didn&apos;t exist before tokenized equities. RHAM is
+          that simply didn&apos;t exist before tokenized equities. RHAV is
           built entirely around that gap, in two ways.{" "}
           <Link href="/how-it-works" className="text-accent hover:underline">
             How it works →
