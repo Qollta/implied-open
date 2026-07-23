@@ -33,10 +33,10 @@
     <path d="M130 96 H152 V118" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
 
     <!-- wordmark -->
-    <text x="186" y="168" font-size="108" font-weight="800" fill="#ffffff" letter-spacing="-2">SAV</text>
+    <text x="186" y="168" font-size="108" font-weight="800" fill="#ffffff" letter-spacing="-2">RHAV</text>
     <circle cx="520" cy="118" r="9" fill="#00c805"/>
 
-    <text x="64" y="220" font-size="30" font-weight="600" fill="#9fb4bc">StockAssetVault</text>
+    <text x="64" y="220" font-size="30" font-weight="600" fill="#9fb4bc">RobinHoodAssetsVault</text>
     <text x="64" y="262" font-size="21" fill="#7c8f97">24/7 tokenized stocks &#183; non-custodial UP / DOWN predict market</text>
 
     <!-- pills -->
