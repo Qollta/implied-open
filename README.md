@@ -27,8 +27,8 @@ From there, RHAM gives you two ways to use that signal:
 
 | | |
 |---|---|
-| **📊 Watch it** | The dashboard — every ticker's live premium, sparklines, a session-by-session breakdown, and a ticker × day heatmap. Free, no wallet, no account. |
-| **🎯 Bet on it** | **Predict** — non-custodial pari-mutuel markets. Put money on UP or DOWN for a stock's trading session, or the full Friday-close-to-Monday-open weekend gap. Resolved entirely on-chain by reading the same price feed at lock and resolve time — no admin, no oracle you have to trust after the fact. |
+| ** Watch it** | The dashboard — every ticker's live premium, sparklines, a session-by-session breakdown, and a ticker × day heatmap. Free, no wallet, no account. |
+| ** Bet on it** | **Predict** — non-custodial pari-mutuel markets. Put money on UP or DOWN for a stock's trading session, or the full Friday-close-to-Monday-open weekend gap. Resolved entirely on-chain by reading the same price feed at lock and resolve time — no admin, no oracle you have to trust after the fact. |
 
 Predict has two lanes, so anyone can play regardless of whether they have a wallet:
 
