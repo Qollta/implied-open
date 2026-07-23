@@ -4,7 +4,7 @@
 
 ### 🟢 Live now at **[rhav.global](https://rhav.global)**
 
-[X / Twitter](https://x.com/rha_market) · Runs on real Robinhood Chain mainnet price data, refreshed continuously.
+[X / Twitter](https://x.com/rha_vault) · Runs on real Robinhood Chain mainnet price data, refreshed continuously.
 
 ---
 

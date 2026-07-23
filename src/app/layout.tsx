@@ -95,7 +95,7 @@ export default function RootLayout({
             <div className="flex shrink-0 flex-nowrap items-center gap-2">
               <WalletTrackerDrawer />
               <a
-                href="https://x.com/rha_market"
+                href="https://x.com/rha_vault"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="RHAV on X"
