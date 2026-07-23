@@ -79,6 +79,3 @@ npm install
 npm test   # Hardhat test suite
 ```
 
-## Disclaimer
-
-Premium data can be noisy on low-liquidity tickers. Predict markets currently run on Robinhood Chain **testnet** — moving real funds to mainnet is a deliberate future step, not done yet. Nothing here is investment advice.
