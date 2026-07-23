@@ -92,7 +92,7 @@ export default async function PredictTickerPage({
         </>
       ) : (
         <div className="rounded-xl border border-border bg-bg-secondary p-10 text-center text-sm text-text-secondary">
-          No real-money markets for {ticker} yet.
+          No ETH markets for {ticker} yet.
         </div>
       )}
     </>

@@ -147,7 +147,7 @@ export default function HowItWorksPage() {
         </p>
         <p>
           Claim <strong className="text-text-primary">0.1 fETH</strong> once a
-          week, then bet it on UP or DOWN just like a real-money market.
+          week, then bet it on UP or DOWN just like an ETH market.
           Winnings are credited straight back to your internal balance — no
           separate claim step, since there&apos;s no gas to pay. Balances
           reset to 0.1 every Thursday 00:00 UTC, not additive — last
@@ -174,7 +174,7 @@ export default function HowItWorksPage() {
           reset. When the week rolls over, whoever finished #1 with a
           positive net gets a bonus added on top of their <em>next</em> weekly
           claim — a small, symbolic prize draw for the best predictor, shown
-          as a 🏆 banner on the leaderboard. The real-ETH leaderboard is
+          as a banner on the leaderboard. The real-ETH leaderboard is
           separate and all-time, since real bets don&apos;t reset weekly.
         </p>
       </Section>

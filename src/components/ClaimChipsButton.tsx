@@ -108,7 +108,7 @@ export default function ClaimChipsButton() {
             {busy ? "Claiming…" : `Claim ${hasBonus ? formatChips(BigInt(wallet.pendingBonus) + WEEKLY_FETH) : "0.1 fETH"}`}
           </button>
           {hasBonus && (
-            <p className="text-[10px] text-accent">🏆 includes last week&apos;s champion bonus</p>
+            <p className="text-[10px] text-accent">includes last week&apos;s champion bonus</p>
           )}
         </div>
       )}

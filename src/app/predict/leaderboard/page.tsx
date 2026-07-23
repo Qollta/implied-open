@@ -13,7 +13,7 @@ const WEEK_SECONDS = 7 * 24 * 60 * 60;
 export const metadata = {
   title: "Leaderboard — Predict — Implied Open",
   description:
-    "Real-money and fETH Predict leaderboards — ranked by ETH (or fETH) actually reclaimed vs staked. Testnet.",
+    "ETH and fETH Predict leaderboards — ranked by ETH (or fETH) actually reclaimed vs staked. Testnet.",
 };
 
 function currentWeekStart(): number {
@@ -49,7 +49,7 @@ export default async function LeaderboardPage() {
         <div className="flex max-w-2xl flex-col gap-2">
           <h1 className="text-2xl font-bold tracking-tight">Leaderboard</h1>
           <p className="text-sm text-text-secondary">
-            Real-money bets are read straight off GapMarket&apos;s own
+            ETH bets are read straight off GapMarket&apos;s own
             on-chain events — no accounts, no off-chain tracking.{" "}
             <span className="text-text-primary">Net</span> is actually
             claimed minus staked; open (unclaimed) positions understate a
@@ -68,14 +68,14 @@ export default async function LeaderboardPage() {
         real={
           <>
             <p className="text-xs text-text-muted">All-time, real ETH.</p>
-            <LeaderboardTable entries={realEntries} emptyText="No real-money bets placed yet." />
+            <LeaderboardTable entries={realEntries} emptyText="No ETH bets placed yet." />
           </>
         }
         play={
           <>
             {champion && (
               <div className="rounded-xl border border-accent/30 bg-accent/5 p-3 text-sm text-text-secondary">
-                🏆 Last week&apos;s champion:{" "}
+                Last week&apos;s champion:{" "}
                 <span className="mono text-text-primary">{truncateAddress(champion.address)}</span>{" "}
                 (net {formatChips(BigInt(champion.netWei))}) — their next weekly claim includes a bonus.
               </div>

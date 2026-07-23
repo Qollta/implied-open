@@ -24,7 +24,7 @@ export default function RealPlayTabs({ real, play }: { real: ReactNode; play: Re
             tab === "real" ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
           }`}
         >
-          💰 Real money
+          ETH
         </button>
         <button
           type="button"
@@ -33,7 +33,7 @@ export default function RealPlayTabs({ real, play }: { real: ReactNode; play: Re
             tab === "play" ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
           }`}
         >
-          🎮 fETH
+          fETH
         </button>
       </div>
 

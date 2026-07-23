@@ -49,7 +49,7 @@ export default async function PredictIndexPage() {
             href="/predict/leaderboard"
             className="text-sm text-text-secondary transition-colors hover:text-accent"
           >
-            🏆 Leaderboard →
+            Leaderboard →
           </Link>
         </div>
         <p className="max-w-2xl text-sm text-text-secondary">
@@ -63,10 +63,10 @@ export default async function PredictIndexPage() {
 
       <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-accent/30 bg-accent/5 p-4">
         <div>
-          <p className="text-sm font-semibold text-text-primary">🎮 New: free weekly fETH — no wallet needed</p>
+          <p className="text-sm font-semibold text-text-primary">New: free weekly fETH — no wallet needed</p>
           <p className="mt-1 max-w-xl text-sm text-text-secondary">
-            Every ticker below now has two tabs — <strong className="text-text-primary">Real money</strong>{" "}
-            (ETH, needs a wallet) and <strong className="text-text-primary">fETH</strong> (fake ETH, an
+            Every ticker below now has two tabs — <strong className="text-text-primary">ETH</strong>{" "}
+            (needs a wallet) and <strong className="text-text-primary">fETH</strong> (fake ETH, an
             internal site wallet — no MetaMask). fETH resets to 0.1 free every
             week: claim, bet, and climb the weekly leaderboard for a shot at
             the champion&apos;s bonus, with nothing real at risk.

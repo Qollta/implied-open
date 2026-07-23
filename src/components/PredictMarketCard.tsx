@@ -170,7 +170,7 @@ export default function PredictMarketCard({
               isWeekend ? "bg-accent/15 text-accent" : "border border-border text-text-secondary"
             }`}
           >
-            {isWeekend ? "🌙 Weekend gap" : "Trading session"}
+            {isWeekend ? "Weekend gap" : "Trading session"}
           </span>
           <p className="mono text-sm text-text-secondary">{formatSessionWindow(Number(locksAt), Number(resolvesAt))}</p>
         </div>
@@ -245,6 +245,19 @@ export default function PredictMarketCard({
             Bet DOWN
           </button>
         </div>
+      )}
+
+      {isConnected && state === 0 && !canBet && (
+        <p className="mt-4 text-sm text-text-muted">
+          Betting just closed for this session — locking now.
+        </p>
+      )}
+
+      {isConnected && state === 1 && !canResolve && (
+        <p className="mt-4 text-sm text-text-muted">
+          Locked, awaiting resolution — betting reopens automatically once
+          the next session starts.
+        </p>
       )}
 
       {isConnected && (Boolean(myUp) || Boolean(myDown)) && (

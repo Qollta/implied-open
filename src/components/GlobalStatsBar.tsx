@@ -31,21 +31,21 @@ export default async function GlobalStatsBar() {
           <strong className="text-text-primary">{rows.length}</strong> tokens tracked
         </span>
         <span className="whitespace-nowrap">
-          📈 Avg premium{" "}
+          Avg premium{" "}
           <strong className={avgPremium >= 0 ? "text-accent" : "text-danger"}>{formatPct(avgPremium)}</strong>
         </span>
         <span className="whitespace-nowrap">
-          💰 <strong className="text-text-primary">{formatCompactUsd(totalVolume)}</strong> 24h volume
+          <strong className="text-text-primary">{formatCompactUsd(totalVolume)}</strong> 24h volume
         </span>
         <span className="whitespace-nowrap">
-          🎮 <strong className="text-text-primary">{fEthOverview.players}</strong> fETH players ·{" "}
+          <strong className="text-text-primary">{fEthOverview.players}</strong> fETH players ·{" "}
           <strong className="text-text-primary">{formatChips(BigInt(fEthOverview.stakedWei))}</strong> staked this week
         </span>
         <Link
           href="/predict/leaderboard"
           className="ml-auto shrink-0 whitespace-nowrap text-accent hover:underline"
         >
-          🏆 Leaderboard →
+          Leaderboard →
         </Link>
       </div>
     </div>

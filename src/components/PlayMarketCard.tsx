@@ -244,6 +244,17 @@ export default function PlayMarketCard({ ticker, initial }: { ticker: string; in
         </div>
       )}
 
+      {!canBet && market.state === 0 && (
+        <p className="mt-4 text-sm text-text-muted">Betting just closed for this session — locking now.</p>
+      )}
+
+      {market.state === 1 && (
+        <p className="mt-4 text-sm text-text-muted">
+          Locked, awaiting resolution — betting reopens automatically once
+          the next session starts.
+        </p>
+      )}
+
       {hasPosition && (
         <p className="mt-3 text-xs text-text-secondary">
           Your position: <span className="mono text-accent">{formatChips(BigInt(myPosition.up))} UP</span>

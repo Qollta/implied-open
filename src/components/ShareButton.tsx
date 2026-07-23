@@ -10,7 +10,7 @@ interface ShareButtonProps {
 function buildTweetText({ ticker, name, premiumPct, marketOpen }: ShareButtonProps): string {
   const pct = `${premiumPct >= 0 ? "+" : ""}${premiumPct.toFixed(2)}%`;
   if (!marketOpen) {
-    return `🌙 Markets are closed, but ${name} (${ticker}) is already trading at ${pct} on Robinhood Chain — the onchain crowd's bet on the next open.`;
+    return `Markets are closed, but ${name} (${ticker}) is already trading at ${pct} on Robinhood Chain — the onchain crowd's bet on the next open.`;
   }
   return `${name} (${ticker}) is trading at ${pct} vs its official close on Robinhood Chain — stock tokens, 24/7.`;
 }

@@ -135,9 +135,9 @@ export default async function Home() {
       </section>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <HighlightCard title="🔥 Top Gainers" rows={topGainers} metric="premium" />
-        <HighlightCard title="🔻 Top Losers" rows={topLosers} metric="premium" />
-        <HighlightCard title="💧 Most Liquid" rows={mostLiquid} metric="volume" />
+        <HighlightCard title="Top Gainers" rows={topGainers} metric="premium" />
+        <HighlightCard title="Top Losers" rows={topLosers} metric="premium" />
+        <HighlightCard title="Most Liquid" rows={mostLiquid} metric="volume" />
       </section>
 
       <PremiumTable rows={liquid} sparklines={sparklines} />
