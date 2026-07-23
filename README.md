@@ -1,4 +1,4 @@
-# RHAV — RobinHood Assets Vault
+# SAV — StockAssetVault
 
 **The live premium tracker for Robinhood Chain's tokenized stocks — plus a free, non-custodial way to bet on where they open next.**
 
@@ -15,7 +15,7 @@ Robinhood Chain is the first chain with **liquid, 24/7-tradable tokenized stocks
 1. **The official close** — Robinhood's real, market-hours-only price, fed on-chain by a Chainlink oracle. It freezes the moment NYSE/NASDAQ shuts for the night, the weekend, or a holiday.
 2. **The live token price** — whatever the token is actually trading for on Robinhood Chain's own DEXes, right now, 24 hours a day, 7 days a week.
 
-RHAV computes the gap between them, live, for every tracked ticker:
+SAV computes the gap between them, live, for every tracked ticker:
 
 ```
 premium % = (live DEX token price − frozen official close) / official close
@@ -23,7 +23,7 @@ premium % = (live DEX token price − frozen official close) / official close
 
 A positive premium while the real market is closed means the on-chain crowd is pricing the stock to open **higher**; negative means **lower**. It's the first genuinely new signal this kind of chain makes possible — nobody could see "where the market thinks a stock opens next" before the exchange reopened, until now.
 
-From there, RHAV gives you two ways to use that signal:
+From there, SAV gives you two ways to use that signal:
 
 | | |
 |---|---|
@@ -33,11 +33,11 @@ From there, RHAV gives you two ways to use that signal:
 Predict has two lanes, so anyone can play regardless of whether they have a wallet:
 
 - **ETH** — bet real (currently testnet) ETH from a connected wallet (MetaMask, Rabby, …). All-time leaderboard.
-- **fETH** — a free practice balance, 0.1/week, tied to a cookie-based account with zero setup. Climb the weekly leaderboard, and the top net winner gets a bonus toward next week's claim — with an eye on rewarding the best predictors with a share of the future **$RHAV** airdrop.
+- **fETH** — a free practice balance, 0.1/week, tied to a cookie-based account with zero setup. Climb the weekly leaderboard, and the top net winner gets a bonus toward next week's claim — with an eye on rewarding the best predictors with a share of the future **$SAV** airdrop.
 
 ## What's live vs. what's testnet
 
-RHAV is two things bolted together on purpose, at two different maturity levels:
+SAV is two things bolted together on purpose, at two different maturity levels:
 
 - **The premium tracker is fully live**, reading real Chainlink oracle data and real Blockscout DEX prices off **Robinhood Chain mainnet**, right now, with zero mocked data. This is the part deployed and hosted at rhav.global.
 - **Predict runs on Robinhood Chain testnet.** A prediction market handling real funds deserves a security review before it touches mainnet money — that's a deliberate, not-yet-made decision, so today "ETH" in Predict means testnet ETH. The contracts, the pari-mutuel logic, and the permissionless lock/resolve mechanism are all real and fully working; only the funds at stake are play money for now.
