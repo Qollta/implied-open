@@ -54,18 +54,6 @@ RHAM is two things bolted together on purpose, at two different maturity levels:
 Everything except `/predict` is **read-only** — no accounts, no database, no wallet required.
 
 
-## Running it locally
-
-The site at rwam.digital is already live — this is only needed if you want to develop or contribute.
-
-```bash
-git clone https://github.com/Qollta/implied-open.git
-cd implied-open
-npm install
-npm run dev
-```
-
-
 
 To use the fETH free-play wallet with persistence across restarts, copy `.env.example` to `.env.local` and fill in an [Upstash Redis](https://console.upstash.com) REST URL + token. Without it, fETH state falls back to a local JSON file (fine for local dev only).
 
