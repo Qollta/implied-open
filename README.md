@@ -2,7 +2,7 @@
 
 **The live premium tracker for Robinhood Chain's tokenized stocks — plus a free, non-custodial way to bet on where they open next.**
 
-### 🟢 Live now at **[rwam.digital](https://rwam.digital)**
+### 🟢 Live now at **[rhav.global](https://rhav.global)**
 
 [X / Twitter](https://x.com/rha_market) · Runs on real Robinhood Chain mainnet price data, refreshed continuously.
 
@@ -39,7 +39,7 @@ Predict has two lanes, so anyone can play regardless of whether they have a wall
 
 RHAV is two things bolted together on purpose, at two different maturity levels:
 
-- **The premium tracker is fully live**, reading real Chainlink oracle data and real Blockscout DEX prices off **Robinhood Chain mainnet**, right now, with zero mocked data. This is the part deployed and hosted at rwam.digital.
+- **The premium tracker is fully live**, reading real Chainlink oracle data and real Blockscout DEX prices off **Robinhood Chain mainnet**, right now, with zero mocked data. This is the part deployed and hosted at rhav.global.
 - **Predict runs on Robinhood Chain testnet.** A prediction market handling real funds deserves a security review before it touches mainnet money — that's a deliberate, not-yet-made decision, so today "ETH" in Predict means testnet ETH. The contracts, the pari-mutuel logic, and the permissionless lock/resolve mechanism are all real and fully working; only the funds at stake are play money for now.
 
 ## Features

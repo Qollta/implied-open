@@ -1229,8 +1229,13 @@ needs nothing, so it's the tab that should be immediately visible.
   repo.
 - Prefer small, frequent commits, same conventions as RH Explorer's workflow.
 - **Deployed on Vercel**, connected to this repo's `master` branch — every
-  push auto-deploys to production. Custom domain: `rwam.digital` (DNS/SSL
-  configured by the second contributor). `UPSTASH_REDIS_REST_URL`/`TOKEN`
-  (or the Marketplace-integration equivalents `UPSTASH_REDIS_REST_KV_REST_API_URL`/
-  `TOKEN` — see `lib/redis.ts`) and `NEXT_PUBLIC_SITE_URL` are set as Vercel
-  env vars, not in this repo.
+  push auto-deploys to production. Custom domain: `rhav.global` (moved from
+  the original `rwam.digital`, which may still exist as a redirect/legacy
+  domain in the Vercel project depending on what was actually done there —
+  confirm rather than assume, this is a dashboard/DNS change no repo commit
+  can make). DNS/SSL configured by the second contributor.
+  `UPSTASH_REDIS_REST_URL`/`TOKEN` (or the Marketplace-integration
+  equivalents `UPSTASH_REDIS_REST_KV_REST_API_URL`/`TOKEN` — see
+  `lib/redis.ts`) and `NEXT_PUBLIC_SITE_URL` (should be
+  `https://rhav.global` post-migration) are set as Vercel env vars, not in
+  this repo.
